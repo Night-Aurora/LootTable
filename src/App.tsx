@@ -30,6 +30,9 @@ interface DataNode {
   items?: LootItem[];
 }
 
+// 物品 ID 到 LootItem 引用列表的映射表类型
+type ItemRegistry = { [itemId: string]: LootItem[] };
+
 const loadJSZip = (): Promise<any> => {
   return new Promise((resolve, reject) => {
     if ((window as any).JSZip) {
@@ -44,7 +47,7 @@ const loadJSZip = (): Promise<any> => {
   });
 };
 
-const parseLootTable = (json: any, path: string): LootItem[] => {
+const parseLootTable = (json: any, path: string, registry: ItemRegistry): LootItem[] => {
   const items: LootItem[] = [];
   if (!json || !json.pools || !Array.isArray(json.pools)) return items;
 
@@ -62,7 +65,16 @@ const parseLootTable = (json: any, path: string): LootItem[] => {
           variant = nbtFunc.tag || JSON.stringify(nbtFunc.data || nbtFunc.components) || 'Custom Data';
         }
         const prob = ((entry.weight || 1) / totalWeight * rolls * 100).toFixed(1) + '%';
-        items.push({ id: entry.name, weight: entry.weight || 1, variant, container: path, probability: prob });
+        
+        // 创建对象
+        const newItem: LootItem = { id: entry.name, weight: entry.weight || 1, variant, container: path, probability: prob };
+        items.push(newItem);
+
+        // 存入全局映射表（存储引用以节省内存）
+        if (!registry[newItem.id]) {
+          registry[newItem.id] = [];
+        }
+        registry[newItem.id].push(newItem);
       }
     });
   });
@@ -79,6 +91,7 @@ const normalizeName = (name: string): string => {
 
 const App: React.FC = () => {
   const [rootData, setRootData] = useState<{ [key: string]: DataNode } | null>(null);
+  const [itemRegistry, setItemRegistry] = useState<ItemRegistry>({}); // 映射表状态
   const [isParsing, setIsParsing] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -90,6 +103,7 @@ const App: React.FC = () => {
     setIsParsing(true);
     setError(null);
     const tree: { [key: string]: DataNode } = {};
+    const newRegistry: ItemRegistry = {}; // 本次解析的临时映射表
 
     try {
       const processSingleFile = async (name: string, content: string) => {
@@ -124,7 +138,7 @@ const App: React.FC = () => {
             }
 
             if (isFile) {
-              const newItems = parseLootTable(json, name);
+              const newItems = parseLootTable(json, name, newRegistry);
               currentNode[nodeKey].items = [...(currentNode[nodeKey].items || []), ...newItems];
             } else {
               currentNode = currentNode[nodeKey].children!;
@@ -148,7 +162,9 @@ const App: React.FC = () => {
       }
 
       if (Object.keys(tree).length === 0) throw new Error("未识别到有效的战利品表数据。");
+      
       setRootData(tree);
+      setItemRegistry(newRegistry); // 解析完毕后保存映射表
       setCurrentPath([]);
     } catch (err: any) { setError(err.message); } finally { setIsParsing(false); }
   };
@@ -315,7 +331,7 @@ const App: React.FC = () => {
                         {!isViewingItems ? (
                           node.type === 'folder' ? `${Object.keys(node.children || {}).length} 个子层级` : `${node.items?.length || 0} 种掉落项`
                         ) : (
-                          `变体: ${node.variant || "None"}`
+                          `NBT: ${node.variant || "None"}`
                         )}
                       </p>
                     </div>
