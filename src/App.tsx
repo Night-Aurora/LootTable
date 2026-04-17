@@ -109,7 +109,7 @@ const App: React.FC = () => {
             const isFile = part.endsWith('.json');
             const cleanName = isFile ? part.replace('.json', '') : part;
             
-            const nodeKey = isFile ? cleanName : normalizeName(cleanName);
+            const nodeKey = isFile ? cleanName : (i < 2 ? normalizeName(cleanName) : cleanName); // 仅对前二层目录进行合并，后续层级保持原样
 
             if (!currentNode[nodeKey]) {
               currentNode[nodeKey] = {
@@ -153,7 +153,8 @@ const App: React.FC = () => {
     } catch (err: any) { setError(err.message); } finally { setIsParsing(false); }
   };
 
-  const displayData = useMemo(() => {
+  // 排序逻辑封装
+  const sortedDisplayData = useMemo(() => {
     if (!rootData) return [];
     let currentLevel = rootData;
     for (const p of currentPath) {
@@ -161,21 +162,32 @@ const App: React.FC = () => {
       if (node && node.type === 'folder' && node.children) {
         currentLevel = node.children;
       } else if (node && node.type === 'file') {
-        return (node.items || []).filter(item => 
-          item.id.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        // 物品列表按 ID 排序
+        return (node.items || [])
+          .filter(item => item.id.toLowerCase().includes(searchQuery.toLowerCase()))
+          .sort((a, b) => a.id.localeCompare(b.id));
       }
     }
-    return Object.values(currentLevel).filter(node => 
-      node.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+
+    // 目录或文件节点按名称排序
+    return Object.values(currentLevel)
+      .filter(node => node.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [rootData, currentPath, searchQuery]);
+
+  // 侧边栏类别排序
+  const sortedSidebarKeys = useMemo(() => {
+    if (!rootData) return [];
+    return Object.keys(rootData).sort((a, b) => a.localeCompare(b));
+  }, [rootData]);
 
   const isViewingItems = useMemo(() => {
     if (!rootData || currentPath.length === 0) return false;
     let node = rootData[currentPath[0]];
     for (let i = 1; i < currentPath.length; i++) {
-      node = node.children![currentPath[i]];
+      if (node && node.children) {
+        node = node.children[currentPath[i]];
+      }
     }
     return node?.type === 'file';
   }, [rootData, currentPath]);
@@ -198,7 +210,7 @@ const App: React.FC = () => {
             
             <nav className="space-y-2">
               <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em] mb-6 px-3">Root Categories</p>
-              {rootData && Object.keys(rootData).map(key => (
+              {rootData && sortedSidebarKeys.map(key => (
                 <button
                   key={key}
                   onClick={() => { setCurrentPath([key]); setSearchQuery(''); }}
@@ -272,7 +284,7 @@ const App: React.FC = () => {
               <div className="h-full flex flex-col items-center justify-center text-slate-200"><LayoutGrid className="h-28 w-28 opacity-5" /><p className="text-[12px] font-black tracking-[0.6em] uppercase mt-10">请从左侧选择一个类别</p></div>
             ) : (
               <div className={`p-10 grid gap-6 ${!isViewingItems ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
-                {displayData.map((node: any, idx) => (
+                {sortedDisplayData.map((node: any, idx) => (
                   <div 
                     key={idx}
                     onClick={() => !isViewingItems && setCurrentPath([...currentPath, node.name])}
