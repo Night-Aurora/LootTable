@@ -1,4 +1,4 @@
-import React, { useState, useMemo, type ChangeEvent } from 'react';
+import React, { useState, useMemo, type ChangeEvent, useEffect, useRef } from 'react';
 import { 
   ChevronLeft, 
   Search, 
@@ -91,11 +91,32 @@ const normalizeName = (name: string): string => {
 
 const App: React.FC = () => {
   const [rootData, setRootData] = useState<{ [key: string]: DataNode } | null>(null);
-  const [itemRegistry, setItemRegistry] = useState<ItemRegistry>({}); // 映射表状态
+  const [itemRegistry, setItemRegistry] = useState<ItemRegistry>({});
   const [isParsing, setIsParsing] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState<string[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  
+  // 核心：存储每一层路径对应的搜索关键词
+  // key: 路径字符串 join('/')，value: 搜索词
+  const [pathSearchQueries, setPathSearchQueries] = useState<{ [path: string]: string }>({});
+  
   const [error, setError] = useState<string | null>(null);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // 获取当前层的搜索词
+  const currentLevelKey = currentPath.join('/');
+  const searchQuery = pathSearchQueries[currentLevelKey] || '';
+
+  // 处理点击外部关闭搜索下拉框
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearchDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -122,8 +143,7 @@ const App: React.FC = () => {
             const part = relevantParts[i];
             const isFile = part.endsWith('.json');
             const cleanName = isFile ? part.replace('.json', '') : part;
-            
-            const nodeKey = isFile ? cleanName : (i < 2 ? normalizeName(cleanName) : cleanName); // 仅对前二层目录进行合并，后续层级保持原样
+            const nodeKey = isFile ? cleanName : (i < 2 ? normalizeName(cleanName) : cleanName);
 
             if (!currentNode[nodeKey]) {
               currentNode[nodeKey] = {
@@ -166,11 +186,12 @@ const App: React.FC = () => {
       setRootData(tree);
       setItemRegistry(newRegistry); // 解析完毕后保存映射表
       setCurrentPath([]);
+      setPathSearchQueries({}); // 重置所有搜索
     } catch (err: any) { setError(err.message); } finally { setIsParsing(false); }
   };
 
-  // 排序逻辑封装
-  const sortedDisplayData = useMemo(() => {
+  // 获取当前显示数据
+  const currentViewData = useMemo(() => {
     if (!rootData) return [];
     let currentLevel = rootData;
     for (const p of currentPath) {
@@ -178,20 +199,58 @@ const App: React.FC = () => {
       if (node && node.type === 'folder' && node.children) {
         currentLevel = node.children;
       } else if (node && node.type === 'file') {
-        // 物品列表按 ID 排序
-        return (node.items || [])
-          .filter(item => item.id.toLowerCase().includes(searchQuery.toLowerCase()))
-          .sort((a, b) => a.id.localeCompare(b.id));
+        return node.items || [];
       }
     }
+    return Object.values(currentLevel);
+  }, [rootData, currentPath]);
 
-    // 目录或文件节点按名称排序
-    return Object.values(currentLevel)
+  // 计算过滤后的数据（主视图）
+  const filteredDisplayData = useMemo(() => {
+    const isFile = currentViewData.length > 0 && 'id' in currentViewData[0];
+    if (isFile) {
+      return (currentViewData as LootItem[])
+        .filter(item => item.id.toLowerCase().includes(searchQuery.toLowerCase()))
+        .sort((a, b) => a.id.localeCompare(b.id));
+    }
+    return (currentViewData as DataNode[])
       .filter(node => node.name.toLowerCase().includes(searchQuery.toLowerCase()))
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [rootData, currentPath, searchQuery]);
+  }, [currentViewData, searchQuery]);
 
-  // 侧边栏类别排序
+  // 搜索建议匹配项
+  const searchSuggestions = useMemo(() => {
+    if (!searchQuery) return [];
+    return filteredDisplayData.slice(0, 20); // 内部匹配最多拿20条供滚动
+  }, [filteredDisplayData, searchQuery]);
+
+  const navigateTo = (path: string[]) => {
+    setCurrentPath(path);
+    setShowSearchDropdown(false);
+  };
+
+  const handleBack = () => {
+    if (currentPath.length === 0) return;
+    const currentKey = currentPath.join('/');
+    
+    // 2. 返回时，清除当前层搜索框内容
+    setPathSearchQueries(prev => {
+      const next = { ...prev };
+      delete next[currentKey];
+      return next;
+    });
+    
+    setCurrentPath(prev => prev.slice(0, -1));
+  };
+
+  const handleSearchChange = (val: string) => {
+    setPathSearchQueries(prev => ({
+      ...prev,
+      [currentLevelKey]: val
+    }));
+    setShowSearchDropdown(val.length > 0);
+  };
+
   const sortedSidebarKeys = useMemo(() => {
     if (!rootData) return [];
     return Object.keys(rootData).sort((a, b) => a.localeCompare(b));
@@ -201,9 +260,7 @@ const App: React.FC = () => {
     if (!rootData || currentPath.length === 0) return false;
     let node = rootData[currentPath[0]];
     for (let i = 1; i < currentPath.length; i++) {
-      if (node && node.children) {
-        node = node.children[currentPath[i]];
-      }
+      if (node && node.children) node = node.children[currentPath[i]];
     }
     return node?.type === 'file';
   }, [rootData, currentPath]);
@@ -229,7 +286,11 @@ const App: React.FC = () => {
               {rootData && sortedSidebarKeys.map(key => (
                 <button
                   key={key}
-                  onClick={() => { setCurrentPath([key]); setSearchQuery(''); }}
+                  onClick={() => { 
+                    // 3. 当用户点击标签栏时，清除所有记录的搜索框内容
+                    setPathSearchQueries({});
+                    setCurrentPath([key]); 
+                  }}
                   className={`w-full flex items-center gap-4 px-5 py-4 rounded-[22px] text-xs transition-all duration-300 ${currentPath[0] === key ? 'bg-white shadow-xl shadow-slate-200/50 border border-slate-50 text-slate-900 font-bold scale-[1.03]' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   <Box className={`h-4 w-4 ${currentPath[0] === key ? 'text-blue-500' : ''}`} />
@@ -244,7 +305,7 @@ const App: React.FC = () => {
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-24 border-b border-slate-50 flex items-center px-10 gap-8 bg-white/60 backdrop-blur-xl sticky top-0 z-10">
             <button 
-              onClick={() => setCurrentPath(prev => prev.slice(0, -1))}
+              onClick={handleBack}
               className={`h-12 w-12 flex items-center justify-center rounded-[20px] border border-slate-100 transition-all ${currentPath.length > 0 ? 'hover:bg-white hover:shadow-lg' : 'opacity-0 pointer-events-none'}`}
             >
               <ChevronLeft className="h-6 w-6 text-slate-600" />
@@ -260,16 +321,49 @@ const App: React.FC = () => {
               ))}
             </div>
 
-            <div className="relative group hidden md:block">
+            <div className="relative" ref={searchRef}>
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
               <input 
                 type="text"
                 disabled={!rootData}
                 placeholder="搜索内容..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery.length > 0 && setShowSearchDropdown(true)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-52 h-12 bg-slate-50 border-none rounded-[20px] pl-12 pr-6 text-[11px] font-bold outline-none focus:ring-2 focus:ring-slate-100 transition-all"
               />
+              
+              {/* 4. 搜索框匹配结果下拉框 */}
+              {showSearchDropdown && searchSuggestions.length > 0 && (
+                <div className="absolute top-14 right-[-20px] w-46 bg-white rounded-[24px] shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="max-h-[220px] overflow-y-auto custom-scrollbar py-2">
+                    {searchSuggestions.map((item: any, idx) => (
+                      <div 
+                        key={idx}
+                        onClick={() => {
+                          if (!isViewingItems) {
+                            navigateTo([...currentPath, item.name]);
+                          } else {
+                            setShowSearchDropdown(false);
+                          }
+                        }}
+                        className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-50 last:border-none"
+                      >
+                        {isViewingItems ? <Package className="h-3 w-3 text-blue-400" /> : (item.type === 'folder' ? <FolderOpen className="h-3 w-3 text-slate-300" /> : <FileText className="h-3 w-3 text-blue-300" />)}
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[10px] font-bold text-slate-700 truncate">
+                            {isViewingItems ? item.id.replace('minecraft:', '') : item.name}
+                          </span>
+                          {isViewingItems && <span className="text-[8px] text-slate-400">几率: {item.probability}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-slate-50/50 px-4 py-2 border-t border-slate-50 text-[8px] font-bold text-slate-300 uppercase tracking-widest text-center">
+                    匹配到 {filteredDisplayData.length} 项
+                  </div>
+                </div>
+              )}
             </div>
           </header>
 
@@ -297,13 +391,16 @@ const App: React.FC = () => {
                 {error && <div className="mt-8 text-red-500 bg-red-50 px-8 py-4 rounded-[28px] text-[11px] font-black border border-red-100 uppercase tracking-widest">{error}</div>}
               </div>
             ) : currentPath.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-slate-200"><LayoutGrid className="h-28 w-28 opacity-5" /><p className="text-[12px] font-black tracking-[0.6em] uppercase mt-10">请从左侧选择一个类别</p></div>
+              <div className="h-full flex flex-col items-center justify-center text-slate-200">
+                <LayoutGrid className="h-28 w-28 opacity-5" />
+                <p className="text-[12px] font-black tracking-[0.6em] uppercase mt-10">请从左侧选择一个类别</p>
+              </div>
             ) : (
               <div className={`p-10 grid gap-6 ${!isViewingItems ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
-                {sortedDisplayData.map((node: any, idx) => (
+                {filteredDisplayData.map((node: any, idx) => (
                   <div 
                     key={idx}
-                    onClick={() => !isViewingItems && setCurrentPath([...currentPath, node.name])}
+                    onClick={() => !isViewingItems && navigateTo([...currentPath, node.name])}
                     className={`group relative p-6 bg-white border border-slate-100 rounded-[30px] shadow-sm transition-all duration-500 flex flex-col ${!isViewingItems ? 'hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 cursor-pointer' : ''}`}
                   >
                     <div className="flex items-start justify-between mb-6">
@@ -340,7 +437,7 @@ const App: React.FC = () => {
                       <div className="mt-6 pt-5 border-t border-slate-50 flex flex-col gap-2 overflow-hidden">
                          <div className="flex items-center gap-2">
                            <Info className="h-3 w-3 text-slate-200 shrink-0" />
-                           <span className="text-[8px] text-slate-400 font-mono tracking-tighter truncate italic">
+                           <span className="text-[8px] text-slate-400 font-mono tracking-tighter truncate italic text-right">
                              来自: {node.container?.split(/[\\/]/).pop()}
                            </span>
                          </div>
