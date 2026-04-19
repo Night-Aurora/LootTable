@@ -11,13 +11,15 @@ import {
   FileArchive,
   LayoutGrid,
   FileText,
-  Sparkles
+  Sparkles,
+  MotorbikeIcon
 } from 'lucide-react';
 
 // --- 类型定义 ---
 interface LootItem {
   id: string;
   weight: number;
+  count:number [];
   variant: string;
   container: string;
   probability: string;
@@ -33,6 +35,68 @@ interface DataNode {
 
 type ItemRegistry = { [itemId: string]: LootItem[] };
 
+// --- 自定义 Hook: 键盘导航 ---
+function useKeyboardNavigation<T>(
+  items: T[],
+  onSelect: (item: T) => void,
+  isOpen: boolean
+) {
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // 当选项列表变化或关闭时重置索引
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [items, isOpen]);
+
+  // 处理滚动跟随
+  useEffect(() => {
+    if (selectedIndex >= 0 && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const selectedElement = container.children[selectedIndex] as HTMLElement;
+      if (selectedElement) {
+        const containerTop = container.scrollTop;
+        const containerBottom = containerTop + container.clientHeight;
+        const elementTop = selectedElement.offsetTop;
+        const elementBottom = elementTop + selectedElement.clientHeight;
+
+        if (elementTop < containerTop) {
+          container.scrollTop = elementTop;
+        } else if (elementBottom > containerBottom) {
+          container.scrollTop = elementBottom - container.clientHeight;
+        }
+      }
+    }
+  }, [selectedIndex]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen || items.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev < items.length - 1 ? prev + 1 : 0));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev > 0 ? prev - 1 : items.length - 1));
+        break;
+      case 'Enter':
+        if (selectedIndex >= 0) {
+          e.preventDefault();
+          onSelect(items[selectedIndex]);
+        }
+        break;
+      case 'Escape':
+        // 这里可以根据需要添加逻辑，通常由外部处理关闭
+        break;
+    }
+  };
+
+  return { selectedIndex, handleKeyDown, scrollContainerRef, setSelectedIndex };
+}
+
+// --- 工具函数 ---
 const loadJSZip = (): Promise<any> => {
   return new Promise((resolve, reject) => {
     if ((window as any).JSZip) {
@@ -58,15 +122,22 @@ const parseLootTable = (json: any, path: string, registry: ItemRegistry): LootIt
     pool.entries?.forEach((entry: any) => {
       if (entry.type === 'minecraft:item' || entry.type === 'item') {
         let variant = 'None';
-        const nbtFunc = entry.functions?.find((f: any) =>
+        let min = 1;
+        let max = 1;
+        const nbt = entry.functions?.find((f: any) =>
           ['minecraft:set_nbt', 'minecraft:set_custom_data', 'minecraft:set_components'].includes(f.function)
         );
-        if (nbtFunc) {
-          variant = nbtFunc.tag || JSON.stringify(nbtFunc.data || nbtFunc.components) || 'Custom Data';
+        const count = entry.functions?.find((f: any) => f.function === 'minecraft:set_count');
+        if (nbt) {
+          variant = nbt.tag || JSON.stringify(nbt.data || nbt.components) || 'Custom Data';
+        }
+        if(count){
+          min = count?.min || 1;
+          max = count?.max || min;
         }
         const prob = ((entry.weight || 1) / totalWeight * rolls * 100).toFixed(1) + '%';
 
-        const newItem: LootItem = { id: entry.name || 'unknown', weight: entry.weight || 1, variant, container: path, probability: prob };
+        const newItem: LootItem = { id: entry.name || 'unknown', weight: entry.weight || 1, count: [min, max], variant, container: path, probability: prob };
         items.push(newItem);
 
         if (newItem.id !== 'unknown') {
@@ -183,15 +254,10 @@ const App: React.FC = () => {
 
   const currentViewData = useMemo(() => {
     if (!rootData) return [];
-
-    // 如果最后一段路径以 # 开头，说明是搜索结果跳转视图
     const lastPart = currentPath[currentPath.length - 1];
     if (lastPart?.startsWith('#')) {
       const itemId = lastPart.slice(1);
       const allOccurrences = itemRegistry[itemId] || [];
-
-      // 如果 path 长度大于 1，说明是在某个子路径下进行的搜索跳转
-      // 我们需要根据父路径 (currentPath 的前几位) 进行过滤
       if (currentPath.length > 1) {
         const limitPath = currentPath.slice(0, -1).join('/');
         return allOccurrences.filter(occ =>
@@ -214,6 +280,17 @@ const App: React.FC = () => {
     }
     return Object.values(currentLevel);
   }, [rootData, currentPath, itemRegistry]);
+
+  const isListView = useMemo(() => {
+    const lastPart = currentPath[currentPath.length - 1];
+    if (lastPart?.startsWith('#')) return true;
+    if (!rootData || currentPath.length === 0) return false;
+    let node: DataNode | undefined = rootData[currentPath[0]];
+    for (let i = 1; i < currentPath.length; i++) {
+      if (node && node.children) node = node.children[currentPath[i]];
+    }
+    return node?.type === 'file';
+  }, [rootData, currentPath]);
 
   const filteredDisplayData = useMemo(() => {
     const lastPart = currentPath[currentPath.length - 1];
@@ -258,7 +335,28 @@ const App: React.FC = () => {
   const navigateTo = (path: string[]) => {
     setCurrentPath(path);
     setShowSearchDropdown(false);
+    // 导航后清空搜索框
+    setPathSearchQueries(prev => ({ ...prev, [currentLevelKey]: '' }));
   };
+
+  // 键盘操作选择项的动作
+  const handleSelectItem = (item: any) => {
+    if (isInputGlobalSearch) {
+      navigateTo([...currentPath, `#${item}`]);
+    } else if (!isListView) {
+      navigateTo([...currentPath, item.name]);
+    } else {
+      setShowSearchDropdown(false);
+    }
+  };
+
+  // 使用自定义 Hook
+  const { 
+    selectedIndex, 
+    handleKeyDown, 
+    scrollContainerRef, 
+    setSelectedIndex 
+  } = useKeyboardNavigation(searchSuggestions, handleSelectItem, showSearchDropdown);
 
   const handleBack = () => {
     if (currentPath.length === 0) return;
@@ -275,17 +373,6 @@ const App: React.FC = () => {
     setPathSearchQueries(prev => ({ ...prev, [currentLevelKey]: val }));
     setShowSearchDropdown(val.length > 0);
   };
-
-  const isListView = useMemo(() => {
-    const lastPart = currentPath[currentPath.length - 1];
-    if (lastPart?.startsWith('#')) return true;
-    if (!rootData || currentPath.length === 0) return false;
-    let node: DataNode | undefined = rootData[currentPath[0]];
-    for (let i = 1; i < currentPath.length; i++) {
-      if (node && node.children) node = node.children[currentPath[i]];
-    }
-    return node?.type === 'file';
-  }, [rootData, currentPath]);
 
   return (
     <div className="h-screen w-full bg-[#f8fafc] flex items-center justify-center p-4 md:p-10 font-sans text-slate-900 overflow-hidden">
@@ -344,34 +431,30 @@ const App: React.FC = () => {
                 disabled={!rootData}
                 placeholder={"请输入内容"}
                 value={searchQuery}
+                onKeyDown={handleKeyDown}
                 onFocus={() => searchQuery.length > 0 && setShowSearchDropdown(true)}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-56 h-12 bg-slate-50 border-none rounded-[20px] pl-12 pr-6 text-[11px] font-bold outline-none focus:ring-2 focus:ring-slate-100 transition-all"
               />
               {showSearchDropdown && searchSuggestions.length > 0 && (
                 <div className="absolute top-14 right-[-20px] w-64 bg-white rounded-[24px] shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="max-h-[280px] overflow-y-auto custom-scrollbar py-2">
+                  <div 
+                    ref={scrollContainerRef}
+                    className="max-h-[280px] overflow-y-auto custom-scrollbar py-2"
+                  >
                     {searchSuggestions.map((item: any, idx) => (
                       <div
                         key={idx}
-                        onClick={() => {
-                          if (isInputGlobalSearch) {
-                            // 保持当前路径，仅仅追加搜索项，这样列表视图可以根据前缀过滤结果
-                            navigateTo([...currentPath, `#${item}`]);
-                          } else if (!isListView) {
-                            navigateTo([...currentPath, item.name]);
-                          } else {
-                            setShowSearchDropdown(false);
-                          }
-                        }}
-                        className="flex items-center gap-3 px-5 py-3 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-50 last:border-none"
+                        onMouseEnter={() => setSelectedIndex(idx)}
+                        onClick={() => handleSelectItem(item)}
+                        className={`flex items-center gap-3 px-5 py-3 cursor-pointer transition-colors border-b border-slate-50 last:border-none ${selectedIndex === idx ? 'bg-blue-50/80' : 'hover:bg-slate-50'}`}
                       >
                         {isInputGlobalSearch ? <Sparkles className="h-3 w-3 text-purple-400" /> : (isListView ? <Package className="h-3 w-3 text-blue-400" /> : (item.type === 'folder' ? <FolderOpen className="h-3 w-3 text-slate-300" /> : <FileText className="h-3 w-3 text-blue-300" />))}
                         <div className="flex flex-col min-w-0">
-                          <span className="text-[10px] font-bold text-slate-700 truncate">
-                            {isInputGlobalSearch ? (item || '').replace('minecraft:', '') : (isListView ? (item.id || '').replace('minecraft:', '') : (item.name || ''))}
+                          <span className={`text-[10px] font-bold break-all ${selectedIndex === idx ? 'text-blue-700' : 'text-slate-700'}`}>
+                            {isInputGlobalSearch ? (item || '') : (isListView ? (item.id || '') : (item.name || ''))}
                           </span>
-                          {isInputGlobalSearch && <span className="text-[8px] text-slate-400">匹配数: {
+                          {isInputGlobalSearch && <span className={`text-[8px] ${selectedIndex === idx ? 'text-blue-400' : 'text-slate-400'}`}>匹配数: {
                             currentPath.length === 0
                               ? itemRegistry[item]?.length
                               : itemRegistry[item]?.filter(o => o.container.replace(/\\/g, '/').includes(currentPath.join('/'))).length
@@ -431,14 +514,14 @@ const App: React.FC = () => {
                       {isListView ? (node.id || '').replace('minecraft:', '') : node.name}
                     </h3>
                     <div className="mt-auto text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
-                      {isListView ? `变体: ${node.variant || "None"}` : (node.type === 'folder' ? `${Object.keys(node.children || {}).length} 子项` : `${node.items?.length || 0} 掉落项`)}
+                      {isListView ? `NBT: ${node.variant || "None"}` : (node.type === 'folder' ? `${Object.keys(node.children || {}).length} 子项` : `${node.items?.length || 0} 掉落项`)}
                     </div>
                     {isListView && (
                       <div className="mt-6 pt-5 border-t border-slate-50 flex flex-col gap-2 overflow-hidden">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-start gap-2">
                           <Info className="h-3 w-3 text-slate-200 shrink-0" />
-                          <span className="text-[8px] text-slate-400 font-mono truncate italic">
-                            来自: {(node.container || '').split(/[\\/]/).pop()}
+                          <span className="text-[10px] text-slate-400 font-mono italic break-all">
+                            {(node.container || '').split(/[\\/]/).slice(currentPath.length).join('/')}
                           </span>
                         </div>
                       </div>
