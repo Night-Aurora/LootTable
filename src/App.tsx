@@ -11,16 +11,15 @@ import {
   FileArchive,
   LayoutGrid,
   FileText,
-  Sparkles,
-  MotorbikeIcon
+  Sparkles
 } from 'lucide-react';
 
 // --- 类型定义 ---
 interface LootItem {
   id: string;
   weight: number;
-  count:number [];
-  variant: string;
+  nbt: string;
+  count: string;
   container: string;
   probability: string;
 }
@@ -34,6 +33,7 @@ interface DataNode {
 }
 
 type ItemRegistry = { [itemId: string]: LootItem[] };
+type IconRegistry = { [itemId: string]: string }
 
 // --- 自定义 Hook: 键盘导航 ---
 function useKeyboardNavigation<T>(
@@ -44,12 +44,10 @@ function useKeyboardNavigation<T>(
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // 当选项列表变化或关闭时重置索引
   useEffect(() => {
     setSelectedIndex(-1);
   }, [items, isOpen]);
 
-  // 处理滚动跟随
   useEffect(() => {
     if (selectedIndex >= 0 && scrollContainerRef.current) {
       const container = scrollContainerRef.current;
@@ -87,9 +85,6 @@ function useKeyboardNavigation<T>(
           onSelect(items[selectedIndex]);
         }
         break;
-      case 'Escape':
-        // 这里可以根据需要添加逻辑，通常由外部处理关闭
-        break;
     }
   };
 
@@ -121,23 +116,36 @@ const parseLootTable = (json: any, path: string, registry: ItemRegistry): LootIt
 
     pool.entries?.forEach((entry: any) => {
       if (entry.type === 'minecraft:item' || entry.type === 'item') {
-        let variant = 'None';
-        let min = 1;
-        let max = 1;
-        const nbt = entry.functions?.find((f: any) =>
+        // 解析变体
+        let nbt = 'None';
+        const nbtFunc = entry.functions?.find((f: any) =>
           ['minecraft:set_nbt', 'minecraft:set_custom_data', 'minecraft:set_components'].includes(f.function)
         );
-        const count = entry.functions?.find((f: any) => f.function === 'minecraft:set_count');
-        if (nbt) {
-          variant = nbt.tag || JSON.stringify(nbt.data || nbt.components) || 'Custom Data';
+        if (nbtFunc) {
+          nbt = nbtFunc.tag || JSON.stringify(nbtFunc.data || nbtFunc.components) || 'Custom Data';
         }
-        if(count){
-          min = count?.min || 1;
-          max = count?.max || min;
+
+        // 解析数量 (Count)
+        let count = '1';
+        const countFunc = entry.functions?.find((f: any) => f.function === 'minecraft:set_count');
+        if (countFunc) {
+          if (typeof countFunc.count === 'number') {
+            count = countFunc.count.toString();
+          } else if (countFunc.count?.min !== undefined) {
+            count = `${countFunc.count.min}-${countFunc.count.max}`;
+          }
         }
+
         const prob = ((entry.weight || 1) / totalWeight * rolls * 100).toFixed(1) + '%';
 
-        const newItem: LootItem = { id: entry.name || 'unknown', weight: entry.weight || 1, count: [min, max], variant, container: path, probability: prob };
+        const newItem: LootItem = {
+          id: entry.name || 'unknown',
+          weight: entry.weight || 1,
+          nbt,
+          count, // 赋值数量
+          container: path,
+          probability: prob
+        };
         items.push(newItem);
 
         if (newItem.id !== 'unknown') {
@@ -156,13 +164,64 @@ const normalizeName = (name: string): string => {
   return (name || '').replace(/_?\d+$/, '');
 };
 
+const displayIcon = (isListView: boolean, isFolder: boolean, id: string, [iconRegistry, setIconRegistry]: [IconRegistry, React.Dispatch<React.SetStateAction<IconRegistry>>]): any => {
+  if (isListView) {
+    const iconPath = iconRegistry[id];
+    if (!iconPath) {
+      const path = `/assets/textures/` + id.replace(':', '/') + `.png`;
+      const itemId = id;
+      const cacheKey = `icon_${id}`;
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        if (cached === 'NULL') {
+          setIconRegistry(prev => ({ ...prev, [itemId]: 'NULL' }));
+        } else {
+          setIconRegistry(prev => ({ ...prev, [itemId]: cached }));
+        }
+      } else {
+        fetch(path)
+          .then(res => {
+            if (!res.ok) throw new Error('Not found');
+            const contentType = res.headers.get('Content-Type') || '';
+            if (!contentType.startsWith('image/')) throw new Error('Not an image');
+            return res.blob();
+          })
+          .then(blob => {
+            return new Promise<string>((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result as string);
+              reader.readAsDataURL(blob);
+            });
+          })
+          .then(dataUrl => {
+            sessionStorage.setItem(cacheKey, dataUrl);
+            setIconRegistry(prev => ({ ...prev, [itemId]: dataUrl }));
+          })
+          .catch(() => {
+            sessionStorage.setItem(cacheKey, 'NULL');
+            setIconRegistry(prev => ({ ...prev, [itemId]: 'NULL' }));
+          });
+      }
+    } else if (iconPath !== 'NULL') {
+      return <img src={iconPath} alt="" className="h-5 w-5" />;
+    } else {
+      return <Package className="h-5 w-5 text-blue-500" />;
+    }
+  } else if (isFolder) {
+    return <FolderOpen className="h-5 w-5 text-slate-400" />
+  } else {
+    return <FileText className="h-5 w-5 text-blue-400" />
+  }
+}
+
 const App: React.FC = () => {
   const [rootData, setRootData] = useState<{ [key: string]: DataNode } | null>(null);
   const [itemRegistry, setItemRegistry] = useState<ItemRegistry>({});
+  const [iconRegistry, setIconRegistry] = useState<IconRegistry>({});
   const [isParsing, setIsParsing] = useState<boolean>(false);
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [pathSearchQueries, setPathSearchQueries] = useState<{ [path: string]: string }>({});
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -187,6 +246,7 @@ const App: React.FC = () => {
     setError(null);
     const tree: { [key: string]: DataNode } = {};
     const newRegistry: ItemRegistry = {};
+    const newIconRegistry: IconRegistry = {};
 
     try {
       const processSingleFile = async (name: string, content: string) => {
@@ -247,6 +307,7 @@ const App: React.FC = () => {
 
       setRootData(tree);
       setItemRegistry(newRegistry);
+      setIconRegistry(newIconRegistry);
       setCurrentPath([]);
       setPathSearchQueries({});
     } catch (err: any) { setError(err.message); } finally { setIsParsing(false); }
@@ -335,11 +396,9 @@ const App: React.FC = () => {
   const navigateTo = (path: string[]) => {
     setCurrentPath(path);
     setShowSearchDropdown(false);
-    // 导航后清空搜索框
     setPathSearchQueries(prev => ({ ...prev, [currentLevelKey]: '' }));
   };
 
-  // 键盘操作选择项的动作
   const handleSelectItem = (item: any) => {
     if (isInputGlobalSearch) {
       navigateTo([...currentPath, `#${item}`]);
@@ -350,12 +409,11 @@ const App: React.FC = () => {
     }
   };
 
-  // 使用自定义 Hook
-  const { 
-    selectedIndex, 
-    handleKeyDown, 
-    scrollContainerRef, 
-    setSelectedIndex 
+  const {
+    selectedIndex,
+    handleKeyDown,
+    scrollContainerRef,
+    setSelectedIndex
   } = useKeyboardNavigation(searchSuggestions, handleSelectItem, showSearchDropdown);
 
   const handleBack = () => {
@@ -438,7 +496,7 @@ const App: React.FC = () => {
               />
               {showSearchDropdown && searchSuggestions.length > 0 && (
                 <div className="absolute top-14 right-[-20px] w-64 bg-white rounded-[24px] shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div 
+                  <div
                     ref={scrollContainerRef}
                     className="max-h-[280px] overflow-y-auto custom-scrollbar py-2"
                   >
@@ -506,15 +564,26 @@ const App: React.FC = () => {
                   >
                     <div className="flex items-start justify-between mb-6">
                       <div className={`p-3 rounded-[18px] ${isListView ? 'bg-blue-50' : 'bg-slate-50'}`}>
-                        {isListView ? <Package className="h-5 w-5 text-blue-500" /> : (node.type === 'folder' ? <FolderOpen className="h-5 w-5 text-slate-400" /> : <FileText className="h-5 w-5 text-blue-400" />)}
+                        {
+                          displayIcon(isListView, node.type === 'folder', isListView ? node.id : node.name, [iconRegistry, setIconRegistry])
+                        }
                       </div>
-                      {isListView && <div className="text-[9px] font-black px-3 py-1.5 bg-green-50 text-green-600 rounded-full border border-green-100/50 shadow-sm">{node.probability}</div>}
+                      {isListView && (
+                        <div className="flex items-start justify-between gap-1.5">
+                          <div className="text-[9px] font-black px-3 py-1.5 bg-green-50 text-green-600 rounded-full border border-green-100/50 shadow-sm">
+                            {node.probability}
+                          </div>
+                          <div className="text-[9px] font-black px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full border border-blue-100/50 shadow-sm">
+                            数量: {node.count}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <h3 className="text-[13px] font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors break-words overflow-wrap-anywhere leading-tight">
                       {isListView ? (node.id || '').replace('minecraft:', '') : node.name}
                     </h3>
-                    <div className="mt-auto text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
-                      {isListView ? `NBT: ${node.variant || "None"}` : (node.type === 'folder' ? `${Object.keys(node.children || {}).length} 子项` : `${node.items?.length || 0} 掉落项`)}
+                    <div className="mt-auto text-[9px] text-slate-400 font-bold uppercase tracking-widest break-all leading-relaxed">
+                      {isListView ? `NBT: ${node.nbt || "None"}` : (node.type === 'folder' ? `${Object.keys(node.children || {}).length} 子项` : `${node.items?.length || 0} 掉落项`)}
                     </div>
                     {isListView && (
                       <div className="mt-6 pt-5 border-t border-slate-50 flex flex-col gap-2 overflow-hidden">
