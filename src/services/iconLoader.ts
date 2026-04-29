@@ -12,7 +12,7 @@ export function loadItemIcon(
     return;
   }
 
-  const path = `/assets/textures/${id.replace(":", "/")}.png`;
+  const path = `${import.meta.env.BASE_URL}assets/textures/${id.replace(":", "/")}.png`;
   const cacheKey = `icon_${id}`;
   const cached = sessionStorage.getItem(cacheKey);
 
