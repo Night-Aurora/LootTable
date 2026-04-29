@@ -38,7 +38,7 @@ jobs:
         run: npm install
 
       - name: Install postcss&tailwindcss
-        run: npm install postcss tailwindcss autoprefixer
+        run: npm install -D tailwindcss @tailwindcss/postcss autoprefixer
 
       - name: Build
         run: npm run build
