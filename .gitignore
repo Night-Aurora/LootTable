@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # icons
-public/assets/textures/*
+#public/assets/textures/*
