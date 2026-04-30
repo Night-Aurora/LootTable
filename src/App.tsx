@@ -1,9 +1,14 @@
-﻿import { MainContent } from "./components/MainContent";
+﻿﻿import { useState } from "react";
+import { MainContent } from "./components/MainContent";
 import { Sidebar } from "./components/Sidebar";
 import { TopBar } from "./components/TopBar";
+import { TutorialDialog } from "./components/TutorialDialog";
+import { shouldShowTutorial } from "./utils/tutorialStorage";
 import { useLootExplorer } from "./hooks/useLootExplorer";
 
 const App = () => {
+  const [showTutorial, setShowTutorial] = useState(() => shouldShowTutorial());
+
   const {
     rootData,
     itemRegistry,
@@ -29,6 +34,8 @@ const App = () => {
 
   return (
     <div className="h-screen w-full bg-[#f8fafc] flex items-center justify-center p-4 md:p-10 font-sans text-slate-900 overflow-hidden">
+      {showTutorial && <TutorialDialog onClose={() => setShowTutorial(false)} />}
+
       <div className="w-full max-w-7xl h-full bg-white rounded-[40px] border border-slate-200 shadow-2xl flex overflow-hidden">
         <Sidebar
           rootData={rootData}

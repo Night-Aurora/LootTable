@@ -31,8 +31,8 @@ export function DisplayCard({
           : ""
       }`}
     >
-      <div className="flex items-start justify-between mb-6">
-        <div className={`p-3 rounded-[18px] ${isListView ? "bg-blue-50" : "bg-slate-50"}`}>
+      <div className="flex items-start justify-between mb-4">
+        <div className={`p-3 rounded-[16px] ${isListView ? "bg-blue-50" : "bg-slate-50"}`}>
           <ItemIcon
             isListView={isListView}
             isFolder={dataNode.type === "folder"}
