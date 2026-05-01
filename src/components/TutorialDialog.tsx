@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BookOpen, X, ChevronRight, FolderOpen, Search, LayoutGrid } from "lucide-react";
+import { BookOpen, X, ChevronRight, FolderOpen} from "lucide-react";
 import { markTutorialAsSeen } from "../utils/tutorialStorage";
 
 interface TutorialDialogProps {
