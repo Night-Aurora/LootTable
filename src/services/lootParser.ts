@@ -121,7 +121,7 @@ export async function parseLootFiles(files: FileList): Promise<ParsedLootData> {
       const json = JSON.parse(content);
       const normalizedPath = (name || "").replace(/\\/g, "/");
       const parts = normalizedPath.split("/");
-      const lootIndex = parts.indexOf("loot_tables");
+      const lootIndex = parts.findIndex(para => ["loot_tables","loot_table"].includes(para));
       const relevantParts = lootIndex !== -1 ? parts.slice(lootIndex + 1) : parts;
 
       if (relevantParts.length === 0) {

@@ -12,7 +12,6 @@ export function loadItemIcon(
     return;
   }
 
-  const path = `${import.meta.env.BASE_URL}assets/textures/${id.replace(":", "/")}.png`;
   const cacheKey = `icon_${id}`;
   const cached = sessionStorage.getItem(cacheKey);
 
@@ -20,6 +19,22 @@ export function loadItemIcon(
     setIconRegistry((prev) => ({ ...prev, [id]: cached }));
     return;
   }
+
+  const namespace = id.split(":").at(0)
+
+  if (!namespace) {
+    return
+  }
+
+  // 根据命名空间获取分流规则
+  // 如果分流到默认规则调用“load Default”，否则继续”
+  const route = routes.find(r => r.modID.includes(namespace))
+
+  if (!route) {
+    return
+  } 
+
+  const path = `${route.iconURL}${id.replace(":", "/")}.png`
 
   fetch(path)
     .then((response) => {
@@ -49,6 +64,22 @@ export function loadItemIcon(
       setIconRegistry((prev) => ({ ...prev, [id]: NULL_ICON }));
     });
 }
+
+const routes = [
+  {
+    modID: ["minecraft"],
+    iconURL: `${import.meta.env.BASE_URL}assets/textures/`
+  },
+  {
+    modID: "*",
+    iconURL: "localhost"
+  }
+]
+
+/* function loadDefault
+  从本地加载图表，保留功能，先不实现。
+  
+*/
 
 export function isMissingIcon(icon: string | undefined) {
   return icon === NULL_ICON;

@@ -10,6 +10,7 @@ const tutorialSteps = [
   {
     icon: FolderOpen,
     title: "获取数据",
+    image: undefined,
     description: "你可以浏览原版游戏Jar文件，数据在“data/minecraft/命名空间下。这时你可以看见”loot_tables“文件夹。同理，整合包的数据也在特定的专属Mod内可以找到。",
   },
 ];
@@ -70,6 +71,7 @@ export function TutorialDialog({ onClose }: TutorialDialogProps) {
                 <div className="flex-1 pt-1">
                   <h3 className="text-sm font-bold text-slate-800 mb-1">{step.title}</h3>
                   <p className="text-xs text-slate-500 leading-relaxed">{step.description}</p>
+                  {step.image && <img src = {`${import.meta.env.BASE_URL}` + step.image} className="mb-2"/>}
                 </div>
                 {index < tutorialSteps.length - 1 && (
                   <ChevronRight className="h-4 w-4 text-slate-200 shrink-0 mt-1" />
