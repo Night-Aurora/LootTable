@@ -9,7 +9,7 @@ interface SidebarProps {
 
 export function Sidebar({ rootData, currentPath, onSelectRoot }: SidebarProps) {
   return (
-    <aside className="w-72 border-r border-slate-100 bg-[#fbfcfd] flex flex-col shrink-0">
+    <aside className="w-72 border-r border-slate-100 bg-[#fbfcfd] flex flex-col shrink-0 overflow-y-auto custom-scrollbar">
       <div className="p-10">
         <div className="flex items-center gap-4 mb-14">
           <div className="h-11 w-11 bg-slate-900 rounded-[18px] flex items-center justify-center shadow-xl rotate-2">
