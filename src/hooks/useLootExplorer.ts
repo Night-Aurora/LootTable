@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
 import { parseLootFiles } from "../services/lootParser";
+import { emitLootExplorerBack } from "../events/lootExplorerEvents";
 import type { DataNode, DataTree, IconRegistry, ItemRegistry, LootItem } from "../types/loot";
 
 type SearchSuggestion = string | LootItem | DataNode;
@@ -182,6 +183,9 @@ export function useLootExplorer() {
       return;
     }
 
+    const fromPath = [...currentPath];
+    const targetPath = currentPath.slice(0, -1);
+
     const currentKey = currentPath.join("/");
     setPathSearchQueries((prev) => {
       const next = { ...prev };
@@ -189,7 +193,8 @@ export function useLootExplorer() {
       return next;
     });
 
-    setCurrentPath((prev) => prev.slice(0, -1));
+    setCurrentPath(targetPath);
+    emitLootExplorerBack({ fromPath, toPath: targetPath });
   };
 
   const handleSearchChange = (value: string) => {

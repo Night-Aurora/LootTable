@@ -1,6 +1,8 @@
 import { FileArchive, FolderOpen, LayoutGrid } from "lucide-react";
 import { DisplayCard } from "./DisplayCard";
 import type { DataNode, IconRegistry, LootItem } from "../types/loot";
+import { onLootExplorerBack } from "../events/lootExplorerEvents";
+import { useEffect, useRef } from "react";
 
 interface MainContentProps {
   rootDataReady: boolean;
@@ -25,8 +27,39 @@ export function MainContent({
   onOpenNode,
   onUploadFiles,
 }: MainContentProps) {
+  //const getScrollStorageKey = (path: string[]) => `loot-scroll:${path.join("/") || "root"}`;
+  const positionRef = useRef<number[]>([]);
+
+  const handleOpenNode = (name: string) => {
+    const container = document.getElementById("loot-main-scroll");
+    if (container) {
+      positionRef.current.push(container.scrollTop);
+      //sessionStorage.setItem(getScrollStorageKey(currentPath), String(container.scrollTop));
+      container.scrollTop = 0;
+    }
+    onOpenNode(name);
+  };
+
+  useEffect(() => {
+    return onLootExplorerBack(() => {
+      requestAnimationFrame(() => {
+        //const targetKey = `loot-scroll:${targetPath.join("/") || "root"}`;
+        const savedPosition = positionRef.current.pop();
+        if (!savedPosition) {
+          return;
+        }
+
+        const container = document.getElementById("loot-main-scroll");
+        if (container) {
+          container.scrollTop = Number(savedPosition) || 0;
+        }
+      });
+    });
+  }, []);
+
+
   return (
-    <main className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#ffffff]">
+    <main id="loot-main-scroll" className="flex-1 overflow-y-auto custom-scrollbar relative bg-[#ffffff]">
       {isParsing && (
         <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex flex-col items-center justify-center gap-4">
           <div className="h-1 w-48 bg-slate-100 rounded-full overflow-hidden">
@@ -98,11 +131,10 @@ export function MainContent({
         </div>
       ) : (
         <div
-          className={`p-10 grid gap-6 ${
-            !isListView
-              ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-          }`}
+          className={`p-10 grid gap-6 ${!isListView
+            ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            }`}
         >
           {filteredDisplayData.map((node, index) => (
             <DisplayCard
@@ -112,7 +144,7 @@ export function MainContent({
               currentPath={currentPath}
               iconRegistry={iconRegistry}
               setIconRegistry={setIconRegistry}
-              onOpenNode={onOpenNode}
+              onOpenNode={handleOpenNode}
             />
           ))}
         </div>
