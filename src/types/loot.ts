@@ -17,4 +17,4 @@ export interface DataNode {
 
 export type DataTree = Record<string, DataNode>;
 export type ItemRegistry = Record<string, LootItem[]>;
-export type IconRegistry = Record<string, string>;
+export type IconRegistry = Record<string, boolean>;

@@ -2,7 +2,6 @@ import type { Dispatch, SetStateAction } from "react";
 import type { IconRegistry } from "../types/loot";
 import { routes } from "../types/route";
 
-const NULL_ICON = "NULL";
 const FETCH_TIMEOUT_MS = 6000;
 const MOD_META_BASE_URL = import.meta.env.BASE_URL;
 const JSON_REGISTRY: Record<string, GitModMeta> = {};
@@ -35,7 +34,7 @@ export function loadItemIcon(
   const cached = sessionStorage.getItem(cacheKey);
 
   if (cached) {
-    setIconRegistry((prev) => ({ ...prev, [id]: cached }));
+    setIconRegistry((prev) => ({ ...prev, [id]: true }));
     return;
   }
 
@@ -67,11 +66,11 @@ export function loadItemIcon(
   fetchImageAsDataUrl(path, FETCH_TIMEOUT_MS)
     .then((dataUrl) => {
       sessionStorage.setItem(cacheKey, dataUrl);
-      setIconRegistry((prev) => ({ ...prev, [id]: dataUrl }));
+      setIconRegistry((prev) => ({ ...prev, [id]: true }));
     })
     .catch(() => {
-      sessionStorage.setItem(cacheKey, NULL_ICON);
-      setIconRegistry((prev) => ({ ...prev, [id]: NULL_ICON }));
+      //sessionStorage.setItem(cacheKey, false);
+      setIconRegistry((prev) => ({ ...prev, [id]: false }));
     })
     .finally(() => {
       IN_FLIGHT_ICON_REQUESTS.delete(id);
@@ -153,14 +152,14 @@ function loadFromGit(
 
       const dataUrl = await fetchImageAsDataUrl(iconUrl, FETCH_TIMEOUT_MS);
       sessionStorage.setItem(cacheKey, dataUrl);
-      setIconRegistry((prev) => ({ ...prev, [id]: dataUrl }));
+      setIconRegistry((prev) => ({ ...prev, [id]: true }));
     } catch (error:any) {
       if (error instanceof TimeoutError) {
         // 网络超时不处理，等待后续可能重试成功
-        return;
+      return;
       }
-      sessionStorage.setItem(cacheKey, NULL_ICON);
-      setIconRegistry((prev) => ({ ...prev, [id]: NULL_ICON }));
+      //sessionStorage.setItem(cacheKey, NULL_ICON);
+      setIconRegistry((prev) => ({ ...prev, [id]: false }));
     } finally {
       IN_FLIGHT_ICON_REQUESTS.delete(id);
     }
@@ -202,9 +201,4 @@ function fetchImageAsDataUrl(url: string, timeoutMs: number): Promise<string> { 
       reader.readAsDataURL(blob);
     }),
     )
-}
-
-
-export function isMissingIcon(icon: string | undefined) {
-  return icon === NULL_ICON;
 }

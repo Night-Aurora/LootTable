@@ -1,6 +1,6 @@
 import { FileText, FolderOpen, Package } from "lucide-react";
 import { useEffect } from "react";
-import { isMissingIcon, loadItemIcon } from "../services/iconLoader";
+import { loadItemIcon } from "../services/iconLoader";
 import type { IconRegistry } from "../types/loot";
 
 interface ItemIconProps {
@@ -23,11 +23,11 @@ export function ItemIcon({
       return;
     }
     loadItemIcon(id, iconRegistry, setIconRegistry);
-  }, [id, iconRegistry, isListView, setIconRegistry]);
+  }, [id, isListView]);
 
   if (isListView) {
-    const iconPath = iconRegistry[id];
-    if (iconPath && !isMissingIcon(iconPath)) {
+    if (iconRegistry[id]) {
+      const iconPath = sessionStorage.getItem(`icon_${id}`) || "";
       return <img src={iconPath} alt="" className="h-5 w-5" />;
     }
     return <Package className="h-5 w-5 text-blue-500" />;
