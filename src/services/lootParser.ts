@@ -48,7 +48,8 @@ function parseLootTable(
         0,
       ) || 1;
     const rolls =
-      typeof pool.rolls === "number" ? pool.rolls : (pool.rolls?.min ?? 1);
+      typeof pool.rolls === "number" ? pool.rolls : ((pool.rolls?.min ?? 0) + (pool.rolls?.max ?? 0)) / 2 ;
+    
 
     pool.entries?.forEach((entry: any) => {
       if (entry.type !== "minecraft:item" && entry.type !== "item") {
@@ -84,6 +85,10 @@ function parseLootTable(
       }
 
       const probability = `${(((entry.weight || 1) / totalWeight) * rolls * 100).toFixed(1)}%`;
+
+      if(!probability.match("[1-9]")){
+        console.log("Detected zero probability item", entry.name, path)
+      }
 
       const newItem: LootItem = {
         id: entry.name || "unknown",

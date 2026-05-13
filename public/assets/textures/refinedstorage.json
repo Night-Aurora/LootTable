@@ -1,0 +1,118 @@
+{
+  "repository": "https://raw.githubusercontent.com/refinedmods/refinedstorage2/develop",
+  "prefix": "refinedstorage-common/",
+  "icons": {
+    "item": [
+      "64k_storage_disk",
+      "storage_housing",
+      "64b_fluid_storage_disk",
+      "wrench",
+      "basic_processor",
+      "1024b_fluid_storage_part",
+      "creative_fluid_storage_disk",
+      "1k_storage_part",
+      "256b_fluid_storage_part",
+      "improved_processor",
+      "raw_improved_processor",
+      "1024b_fluid_storage_disk",
+      "advanced_processor",
+      "64k_storage_part",
+      "16k_storage_part",
+      "construction_core",
+      "raw_advanced_processor",
+      "destruction_core",
+      "silicon",
+      "4096b_fluid_storage_disk",
+      "256b_fluid_storage_disk",
+      "processor_binding",
+      "quartz_enriched_iron",
+      "creative_storage_disk",
+      "4096b_fluid_storage_part",
+      "16k_storage_disk",
+      "4k_storage_disk",
+      "4k_storage_part",
+      "quartz_enriched_copper",
+      "raw_basic_processor",
+      "64b_fluid_storage_part",
+      "1k_storage_disk"
+    ],
+    "block/cable": [
+      "light_gray",
+      "magenta",
+      "purple",
+      "pink",
+      "orange",
+      "lime",
+      "black",
+      "light_blue",
+      "blue",
+      "part_border",
+      "green",
+      "yellow",
+      "cyan",
+      "red",
+      "white",
+      "brown",
+      "gray"
+    ],
+    "block/portable_grid": [
+      "portable_grid_2_inactive",
+      "portable_grid_6",
+      "portable_grid_5",
+      "portable_grid_2",
+      "portable_grid_8",
+      "portable_grid_3",
+      "portable_grid_7",
+      "portable_grid_1",
+      "portable_grid_4"
+    ],
+    "item/pattern": [
+      "processing",
+      "crafting",
+      "empty",
+      "smithing_table",
+      "stonecutter"
+    ],
+    "block/storage_block": [
+      "1k_storage_block",
+      "4k_storage_block",
+      "creative_storage_block",
+      "16k_storage_block",
+      "64k_storage_block"
+    ],
+    "block/fluid_storage_block": [
+      "64b_fluid_storage_block",
+      "4096b_fluid_storage_block",
+      "creative_fluid_storage_block",
+      "256b_fluid_storage_block",
+      "1024b_fluid_storage_block"
+    ],
+    "block/disk": [
+      "disk",
+      "fluid_disk",
+      "leds"
+    ],
+    "item/security_card": [
+      "active",
+      "inactive"
+    ],
+    "block/disk_drive": [
+      "left",
+      "right"
+    ],
+    "block/controller": [
+      "on",
+      "off"
+    ],
+    "block/relay": [
+      "in",
+      "out"
+    ],
+    "block/machine_casing": [
+      "end"
+    ],
+    "block/network_receiver": [
+      "base"
+    ]
+  }
+}

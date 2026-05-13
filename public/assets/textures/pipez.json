@@ -1,0 +1,17 @@
+{
+  "repository": "https://raw.githubusercontent.com/henkelmax/pipez/master",
+  "prefix": "",
+  "icons": {
+    "block": [
+      "universal_pipe",
+      "gas_pipe",
+      "energy_pipe",
+      "fluid_pipe",
+      "item_pipe"
+    ],
+    "item": [
+      "filter_destination_tool",
+      "wrench"
+    ]
+  }
+}

@@ -142,7 +142,7 @@ export function useLootExplorer() {
           occurrence.container.replace(/\\/g, "/").includes(currentDirPath),
         );
       })
-      .sort()
+      .sort((a,b) => a.length - b.length)
       .slice(0, 50);
   }, [itemRegistry, searchQuery, isInputGlobalSearch, currentPath]);
 
@@ -159,9 +159,10 @@ export function useLootExplorer() {
   }, [filteredDisplayData, searchQuery, isInputGlobalSearch, globalSearchSuggestions]);
 
   const navigateTo = (path: string[]) => {
+    const targetLevelKey = path.join("/") || "root";
     setCurrentPath(path);
     setShowSearchDropdown(false);
-    setPathSearchQueries((prev) => ({ ...prev, [currentLevelKey]: "" }));
+    setPathSearchQueries((prev) => ({ ...prev, [targetLevelKey]: "" }));
   };
 
   const handleSelectItem = (item: SearchSuggestion) => {

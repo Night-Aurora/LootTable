@@ -1,0 +1,69 @@
+{
+  "repository": "https://raw.githubusercontent.com/Alex-Hashtag/LegendarySurvivalOverhaul/1.20.1",
+  "prefix": "",
+  "icons": {
+    "item": [
+      "water_plant_seeds",
+      "water_plant_bag",
+      "warm_string",
+      "sun_fern_leaf",
+      "heart_fragment",
+      "ice_fern_gold_leaf",
+      "canteen",
+      "cold_resistance_ring",
+      "water_purifier",
+      "heart_container",
+      "ice_fern_leaf",
+      "sponge",
+      "large_canteen",
+      "thermal_resistance_ring",
+      "purified_water_bottle",
+      "heat_resistance_ring",
+      "canteen_purified",
+      "ice_fern_seeds",
+      "thermometer",
+      "shield_container",
+      "large_canteen_purified",
+      "sun_fern_seeds",
+      "cold_string",
+      "sun_fern_gold_leaf",
+      "thermometer_null",
+      "nether_chalice"
+    ],
+    "item/juice": [
+      "melon_juice",
+      "sweet_berries_juice",
+      "glow_berries_juice",
+      "chorus_fruit_juice",
+      "apple_juice",
+      "golden_carrot_juice",
+      "cactus_juice",
+      "beetroot_juice",
+      "glistering_melon_juice",
+      "pumpkin_juice",
+      "golden_apple_juice",
+      "carrot_juice"
+    ],
+    "item/armor": [
+      "snow_leggings",
+      "snow_chestplate",
+      "desert_chestplate",
+      "snow_boots",
+      "snow_helmet",
+      "desert_leggings",
+      "desert_boots",
+      "desert_helmet"
+    ],
+    "item/healing": [
+      "plaster",
+      "tonic",
+      "medkit",
+      "bandage",
+      "healing_herbs",
+      "morphine"
+    ],
+    "item/seasonal_calendar": [
+      "calendar_null"
+    ]
+  }
+}

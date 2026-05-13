@@ -1,0 +1,91 @@
+{
+  "repository": "https://raw.githubusercontent.com/mrh0/createaddition/1.20.1",
+  "prefix": "",
+  "icons": {
+    "item": [
+      "overcharged_capacitor",
+      "festive_spool",
+      "connector_old",
+      "zinc_sheet",
+      "diamond_grit",
+      "brass_rod",
+      "chocolate_cake",
+      "diamond_grit_sandpaper",
+      "copper_wire",
+      "iron_rod",
+      "honey_cake",
+      "gold_spool",
+      "small_light_connector",
+      "cake_base_baked",
+      "seed_oil_bucket",
+      "copper_rod",
+      "electrum_nugget",
+      "biomass",
+      "capacitor",
+      "bioethanol_bucket",
+      "biomass_pellet",
+      "overcharged_alloy",
+      "straw",
+      "electrum_wire",
+      "iron_spool",
+      "connector",
+      "connector_gold",
+      "iron_wire",
+      "electrum_spool",
+      "gold_rod",
+      "overcharged_hammer",
+      "large_connector",
+      "electrum_ingot",
+      "gold_wire",
+      "electrum_amulet",
+      "spool",
+      "electrum_rod",
+      "multimeter",
+      "copper_spool",
+      "cake_base",
+      "electrum_sheet"
+    ],
+    "block/connector": [
+      "large_pull",
+      "copper_push",
+      "gold_none",
+      "bulb",
+      "large_none",
+      "large_push",
+      "copper_none",
+      "bulb_old_lit",
+      "copper_passive",
+      "copper_pull",
+      "bulb_off"
+    ],
+    "block/redstone_connector": [
+      "redstone_connector_off",
+      "redstone_connector_base_on",
+      "redstone_connector_on",
+      "redstone_connector_base_off"
+    ],
+    "block/modular_accumulator": [
+      "gauge_old",
+      "gauge"
+    ],
+    "block/redstone_relay": [
+      "redstone_relay_stone",
+      "redstone_relay_stone_on"
+    ],
+    "block/digital_adapter": [
+      "block"
+    ],
+    "block/electric_motor": [
+      "brass_motor"
+    ],
+    "block/rolling_mill": [
+      "andesite_casing_short"
+    ],
+    "block/overcharged_casing": [
+      "overcharged_casing"
+    ],
+    "block/alternator": [
+      "coil"
+    ]
+  }
+}
