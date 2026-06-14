@@ -1,6 +1,7 @@
 {
   "repository": "https://raw.githubusercontent.com/ochotonida/artifacts/1.20.1",
   "prefix": "common/",
+  "translation": "src/main/resources/assets/artifacts/lang/zh_cn.json",
   "icons": {
     "item": [
       "snorkel",

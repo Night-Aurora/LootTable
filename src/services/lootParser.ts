@@ -1,4 +1,5 @@
 import type { DataTree, ItemRegistry, LootItem } from "../types/loot";
+import { loadTranslation } from "../utils/jsonMapping";
 
 type JsonValue = Record<string, any>;
 
@@ -207,6 +208,28 @@ export async function parseLootFiles(files: FileList): Promise<ParsedLootData> {
     throw new Error("Loot parse fail");
   }
 
+  const flatedReg = groupBy(Object.values(registry), item => {
+    return item.at(0)?.id.split(":").at(0) || "unknown";
+  });
+
+  Object.entries(flatedReg).forEach(([modId, items]) => {
+    loadTranslation(modId, items);
+  })
+
+  // 将registry按键值id分类，分批加载翻译
+
   return { tree, registry };
 }
+
+function groupBy<T>(array: T[], keyFn: (item: T) => string): Record<string, T[]> {
+  return array.reduce((result: Record<string, T[]>, item) => {
+    const key = keyFn(item);
+    if (!result[key]) {
+      result[key] = [];
+    }
+    result[key].push(item);
+    return result;
+  }, {});
+}
+
 

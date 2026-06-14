@@ -22,6 +22,7 @@ export function DisplayCard({
   const dataNode = node as DataNode;
   const lootItem = node as LootItem;
 
+
   return (
     <div
       onClick={() => !isListView && onOpenNode(dataNode.name)}
@@ -55,8 +56,13 @@ export function DisplayCard({
       </div>
 
       <h3 className="text-[13px] font-black text-slate-800 mb-2 group-hover:text-blue-600 transition-colors break-words overflow-wrap-anywhere leading-tight">
-        {isListView ? (lootItem.id || "").replace("minecraft:", "") : dataNode.name}
+        {isListView ? (`${lootItem.id}` || "").replace("minecraft:", "") : dataNode.name}
       </h3>
+      {isListView && (
+        <h3 className="text-[13px] font-black text-slate-800 mb-2 group-hover:text-green-600 transition-colors break-words overflow-wrap-anywhere leading-tight">
+          { lootItem.translatedName }
+        </h3>
+      )}
 
       <div className="mt-auto text-[9px] text-slate-400 font-bold uppercase tracking-widest break-all leading-relaxed">
         {isListView

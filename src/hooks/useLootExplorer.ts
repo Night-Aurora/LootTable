@@ -129,6 +129,18 @@ export function useLootExplorer() {
     const term = searchQuery.slice(1).toLowerCase();
     const currentDirPath = currentPath.join("/");
 
+    // const filtered = Object.entries(itemRegistry)
+    // .filter(([id, occurrences]) => {
+    //   const standard = occurrences.at(0);
+    //   if(standard && standard.translatedName?.includes(term)) {
+    //     return true;
+    //   }
+    //   if(id && id.toLowerCase().includes(term)){
+    //     return true;
+    //   }
+    // })
+
+
     return Object.keys(itemRegistry)
       .filter((id) => {
         if (!id || !id.toLowerCase().includes(term)) {

@@ -1,5 +1,6 @@
 export interface LootItem {
   id: string;
+  translatedName? : string
   weight: number;
   nbt: string;
   count: string;
@@ -14,6 +15,13 @@ export interface DataNode {
   children?: Record<string, DataNode>;
   items?: LootItem[];
 }
+
+export type GitModMeta = {
+  repository: string;
+  prefix: string | "";
+  translation? : string;
+  icons: Record<string, string[]>;
+};
 
 export type DataTree = Record<string, DataNode>;
 export type ItemRegistry = Record<string, LootItem[]>;
