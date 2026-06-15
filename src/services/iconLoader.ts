@@ -72,56 +72,8 @@ function loadFromGit(
   const id = `${mod_id}:${name}`;
   const cacheKey = `icon_${id}`;
 
-  // const getMeta = async (): Promise<GitModMeta> => {
-  //   // 已有缓存
-  //   if (JSON_REGISTRY[mod_id]) {
-  //     return JSON_REGISTRY[mod_id];
-  //   }
-
-  //   // 已有进行中的请求
-  //   if (pendingJsonRequests.has(mod_id)) {
-  //     return await pendingJsonRequests.get(mod_id)!;
-  //   }
-
-  //   // 发起新请求（async 函数自动返回 Promise）
-  //   const promise = (async () => {
-  //     const url = `${MOD_META_BASE_URL}assets/textures/${mod_id}.json`;
-  //     const response = await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
-
-  //     if (!response.ok) {
-  //       throw new Error(`Metadata not found: ${response.status}`);
-  //     }
-  //     const contentType = response.headers.get("Content-Type") || undefined;
-  //     if (!contentType || !contentType.startsWith("application/json")) {
-  //       throw new Error(`Invalid json:${mod_id}`);
-  //     }
-
-  //     const json = await response.json() as GitModMeta;
-
-  //     if (!json?.repository || !json?.icons) {
-  //       throw new Error("Invalid metadata json");
-  //     }
-
-  //     JSON_REGISTRY[mod_id] = json;
-  //     return json;
-  //   })();
-
-  //   // 清理进行中的请求
-  //   promise.then(
-  //     () => {
-  //       pendingJsonRequests.delete(mod_id);
-  //     },
-  //     () => {
-  //       pendingJsonRequests.delete(mod_id);
-  //     },
-  //   );
-  //   pendingJsonRequests.set(mod_id, promise);
-  //   return await promise;
-  // };
-
   const load = async () => {
     try {
-      //const meta = await getMeta();
       const meta = await loadPathIndex(mod_id); // 获取路径索引表
 
       const key = Object.keys(meta.icons).find((groupKey) => {

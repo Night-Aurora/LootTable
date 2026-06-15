@@ -1,0 +1,14 @@
+{
+  "repository": "https://raw.githubusercontent.com/JustBogdanOff/refueled/1.20.1-main",
+  "prefix": "",
+  "translation": "src/main/resources/assets/refueled/lang/zh_cn.json",
+  "icons": {
+    "item": [
+      "battery",
+      "canister"
+    ],
+    "block/gas_station": [
+      "blockbridge"
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "repository": "https://raw.githubusercontent.com/mortuusars/Chalk/1.20",
+  "prefix": "",
+  "translation": "src/main/resources/assets/chalk/lang/zh_cn.json",
+  "icons": {
+    "item": [
+      "chalk_box_yellow_chalk",
+      "chalk_box_white_chalk",
+      "chalk_box_brown_chalk",
+      "chalk_box_orange_chalk",
+      "purple_chalk",
+      "light_blue_chalk",
+      "chalk_box_light_blue_chalk",
+      "chalk_box_purple_chalk",
+      "black_chalk",
+      "pink_chalk",
+      "chalk_box_gray_chalk",
+      "magenta_chalk",
+      "chalk_box_pink_chalk",
+      "light_gray_chalk",
+      "lime_chalk",
+      "chalk_box_lime_chalk",
+      "red_chalk",
+      "white_chalk",
+      "chalk_box_cyan_chalk",
+      "cyan_chalk",
+      "orange_chalk",
+      "gray_chalk",
+      "chalk_box",
+      "chalk_box_magenta_chalk",
+      "brown_chalk",
+      "chalk_box_blue_chalk",
+      "chalk_box_light_gray_chalk",
+      "green_chalk",
+      "yellow_chalk",
+      "chalk_box_green_chalk",
+      "blue_chalk",
+      "chalk_box_black_chalk",
+      "chalk_box_red_chalk"
+    ],
+    "block/mark": [
+      "center",
+      "arrow",
+      "pickaxe",
+      "cross",
+      "skull",
+      "house"
+    ]
+  }
+}

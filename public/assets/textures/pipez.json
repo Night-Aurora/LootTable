@@ -1,6 +1,7 @@
 {
   "repository": "https://raw.githubusercontent.com/henkelmax/pipez/master",
   "prefix": "",
+  "translation": "src/main/resources/assets/pipez/lang/zh_cn.json",
   "icons": {
     "block": [
       "universal_pipe",

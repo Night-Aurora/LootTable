@@ -1,6 +1,7 @@
 {
   "repository": "https://raw.githubusercontent.com/mrh0/createaddition/1.20.1",
   "prefix": "",
+  "translation": "src/main/resources/assets/createaddition/lang/zh_cn.json",
   "icons": {
     "item": [
       "overcharged_capacitor",

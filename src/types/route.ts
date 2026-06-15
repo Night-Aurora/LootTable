@@ -6,7 +6,7 @@ export const routes = [
     iconURL: `${MOD_META_BASE_URL}assets/textures/`,
   },
   {
-    modID: ['create', 'immersiveengineering', 'farmersdelight', 'artifacts', 'createdieselgenerators', 'refinedstorage', 'bakery', 'vinery', 'createaddition', 'legendarysurvivaloverhaul', 'pipez'],
+    modID: ['chalk', 'create', 'create_radar', 'createaddition', 'createdieselgenerators', 'farmersdelight', 'immersiveengineering', 'legendarysurvivaloverhaul', 'pipez', 'refueled', 'refinedstorage', 'refinedstorageaddons', 'dragnvehicles', 'artifacts', 'bakery', 'vinery'],
     iconURL: "github",
   },
 ];

@@ -1,6 +1,7 @@
 {
   "repository": "https://raw.githubusercontent.com/george8188625/Create-Diesel-Generators/1.20.1",
   "prefix": "",
+  "translation": "src/main/resources/assets/createdieselgenerators/lang/zh_cn.json",
   "icons": {
     "item": [
       "ethanol_bucket",

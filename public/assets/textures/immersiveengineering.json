@@ -1,6 +1,7 @@
 {
   "repository": "https://raw.githubusercontent.com/BluSunrize/ImmersiveEngineering/1.20.1",
   "prefix": "",
+  "translation": "src/main/resources/assets/immersiveengineering/lang/zh_cn.json",
   "icons": {
     "item": [
       "tool_sword_steel",
@@ -22,6 +23,7 @@
       "minecart_woodenbarrel",
       "bullet_empty_casing",
       "material_component_steel",
+      "shader_0",
       "bullet_crystalwill",
       "white",
       "survey_tools",
@@ -44,6 +46,7 @@
       "earmuffs_overlay",
       "fake_icon_birthday",
       "material_windmill_sail",
+      "mold_packing_4",
       "bullet_flare",
       "mold_plate",
       "graphite_electrode",
@@ -55,6 +58,7 @@
       "material_stick_aluminum",
       "metal_plate_gold",
       "metal_ingot_steel",
+      "shader_1",
       "material_component_electronic",
       "sawblade_blade",
       "armor_steel_helmet",
@@ -81,6 +85,7 @@
       "metal_dust_uranium",
       "mold_bullet_casing",
       "bullet_homing",
+      "mold_packing_9",
       "blueprint",
       "bullet_buckshot",
       "metal_dust_steel",
@@ -133,6 +138,7 @@
       "maneuver_gear",
       "material_plate_duroplast",
       "tool_shovel_steel",
+      "shader_2",
       "material_waterwheel_segment",
       "fake_icon_bttf",
       "rockcutter_blade",
@@ -233,6 +239,32 @@
       "sheetmetal_cyan",
       "deepslate_ore_lead"
     ],
+    "block/wooden_device": [
+      "crate",
+      "sorter_5",
+      "reinforced_crate_festive",
+      "gunpowder_barrel_festive",
+      "turntable",
+      "fluid_sorter_1",
+      "item_batcher_out",
+      "sorter_0",
+      "gunpowder_barrel",
+      "fluid_sorter_5",
+      "reinforced_crate",
+      "sorter_3",
+      "fluid_sorter_0",
+      "sorter_4",
+      "wallmount",
+      "sorter_1",
+      "fluid_sorter_2",
+      "crate_festive",
+      "fluid_sorter_4",
+      "craftingtable",
+      "item_batcher",
+      "sorter_2",
+      "fluid_sorter_3",
+      "item_batcher_in"
+    ],
     "block/stone_decoration": [
       "hempcrete_pillar",
       "duroplast",
@@ -251,6 +283,24 @@
       "concrete_brick_cracked",
       "concrete_leaded"
     ],
+    "block/shaders": [
+      "balloon_1_2",
+      "balloon_1_4",
+      "balloon_1_8",
+      "balloon_0",
+      "balloon_pipes",
+      "balloon_1_1",
+      "balloon_circuit",
+      "balloon_1_5",
+      "balloon_1_7",
+      "balloon_shark",
+      "balloon_1_3",
+      "balloon_whitestripe",
+      "balloon_1_0",
+      "balloon_1_6",
+      "balloon_uncoloured",
+      "balloon_fusion"
+    ],
     "block/metal_decoration": [
       "redstone_engineering",
       "aluminum_scaffolding_noctm",
@@ -267,20 +317,6 @@
       "steel_scaffolding_noctm",
       "radiator"
     ],
-    "block/wooden_device": [
-      "crate",
-      "reinforced_crate_festive",
-      "gunpowder_barrel_festive",
-      "turntable",
-      "item_batcher_out",
-      "gunpowder_barrel",
-      "reinforced_crate",
-      "wallmount",
-      "crate_festive",
-      "craftingtable",
-      "item_batcher",
-      "item_batcher_in"
-    ],
     "block/connector": [
       "connector_mv",
       "relay_mv",
@@ -290,6 +326,7 @@
       "connector_lv",
       "connector_probe",
       "relay_lv",
+      "metal2_floodlight_glass",
       "breaker_switch",
       "connector_bundled",
       "connector_hv"
@@ -321,14 +358,6 @@
       "furnace_heater",
       "furnace_heater_active_overlay",
       "furnace_heater_overlay"
-    ],
-    "block/shaders": [
-      "balloon_pipes",
-      "balloon_circuit",
-      "balloon_shark",
-      "balloon_whitestripe",
-      "balloon_uncoloured",
-      "balloon_fusion"
     ],
     "block": [
       "cushion",

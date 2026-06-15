@@ -1,0 +1,25 @@
+{
+  "repository": "https://raw.githubusercontent.com/DragN0007/Valiant-Vehicles-1.20.1/master",
+  "prefix": "",
+  "translation": "src/main/resources/assets/dragnvehicles/lang/zh_cn.json",
+  "icons": {
+    "item": [
+      "car",
+      "truck_body",
+      "sports_wheel",
+      "motorcycle_body",
+      "suv",
+      "truck",
+      "classic_body",
+      "engine",
+      "classic",
+      "suv_body",
+      "car_body",
+      "sport_car",
+      "sports_engine",
+      "motorcycle",
+      "sport_car_body",
+      "wheel"
+    ]
+  }
+}

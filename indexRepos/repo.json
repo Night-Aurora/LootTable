@@ -1,0 +1,18 @@
+{
+    "chalk":"https://github.com/mortuusars/Chalk#1.20",
+    "create":"https://github.com/Creators-of-Create/Create#mc1.20.1/dev",
+    "create_radar":"https://github.com/Arsenalists-of-Create/Create-Radar#master",
+    "createaddition":"https://github.com/mrh0/createaddition#1.20.1",
+    "createdieselgenerators":"https://github.com/george8188625/Create-Diesel-Generators#1.20.1",
+    "farmersdelight":"https://github.com/vectorwing/FarmersDelight#1.20.4",
+    "immersiveengineering":"https://github.com/BluSunrize/ImmersiveEngineering#1.20.1",
+    "legendarysurvivaloverhaul":"https://github.com/Alex-Hashtag/LegendarySurvivalOverhaul#1.20.1",
+    "pipez":"https://github.com/henkelmax/pipez#master",
+    "refueled":"https://github.com/JustBogdanOff/refueled#1.20.1-main",
+    "refinedstorage":["https://github.com/refinedmods/refinedstorage2#develop","refinedstorage-common/"],
+    "refinedstorageaddons":"https://github.com/refinedmods/refinedstorageaddons#develop",
+    "dragnvehicles":"https://github.com/DragN0007/Valiant-Vehicles-1.20.1#master",
+    "artifacts":["https://github.com/ochotonida/artifacts#1.20.1","common/"],
+    "bakery":["https://github.com/Let-s-Do-Collection/Bakery#1.20.1","common/"],
+    "vinery":["https://github.com/Let-s-Do-Collection/Vinery#1.20.1","common/"]
+}

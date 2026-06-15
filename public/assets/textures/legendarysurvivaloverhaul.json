@@ -1,7 +1,40 @@
 {
   "repository": "https://raw.githubusercontent.com/Alex-Hashtag/LegendarySurvivalOverhaul/1.20.1",
   "prefix": "",
+  "translation": "src/main/resources/assets/legendarysurvivaloverhaul/lang/zh_cn.json",
   "icons": {
+    "item/thermometer": [
+      "thermometer_20",
+      "thermometer_19",
+      "thermometer_21",
+      "thermometer_22",
+      "thermometer_27",
+      "thermometer_09",
+      "thermometer_06",
+      "thermometer_14",
+      "thermometer_15",
+      "thermometer_29",
+      "thermometer_11",
+      "thermometer_10",
+      "thermometer_24",
+      "thermometer_03",
+      "thermometer_04",
+      "thermometer_00",
+      "thermometer_01",
+      "thermometer_05",
+      "thermometer_17",
+      "thermometer_12",
+      "thermometer_07",
+      "thermometer_02",
+      "thermometer_28",
+      "thermometer_16",
+      "thermometer_25",
+      "thermometer_08",
+      "thermometer_13",
+      "thermometer_23",
+      "thermometer_26",
+      "thermometer_18"
+    ],
     "item": [
       "water_plant_seeds",
       "water_plant_bag",
@@ -44,6 +77,40 @@
       "golden_apple_juice",
       "carrot_juice"
     ],
+    "block": [
+      "ice_fern_2",
+      "heartfruit_fruit_01",
+      "heartfruit_fruit_03",
+      "heartfruit_fruit_00",
+      "ice_fern_1",
+      "ice_fern_0",
+      "sun_fern_1",
+      "sun_fern_0",
+      "heartfruit_fruit_02",
+      "sun_fern_2"
+    ],
+    "item/coat": [
+      "thermal_coat_2",
+      "heating_coat_1",
+      "cooling_coat_2",
+      "heating_coat_3",
+      "thermal_coat_3",
+      "cooling_coat_1",
+      "heating_coat_2",
+      "thermal_coat_1",
+      "cooling_coat_3"
+    ],
+    "item/padding": [
+      "cooling_padding_3",
+      "thermal_padding_3",
+      "heating_padding_2",
+      "heating_padding_1",
+      "heating_padding_3",
+      "thermal_padding_1",
+      "thermal_padding_2",
+      "cooling_padding_2",
+      "cooling_padding_1"
+    ],
     "item/armor": [
       "snow_leggings",
       "snow_chestplate",
@@ -63,6 +130,7 @@
       "morphine"
     ],
     "item/seasonal_calendar": [
+      "spring1",
       "calendar_null"
     ]
   }

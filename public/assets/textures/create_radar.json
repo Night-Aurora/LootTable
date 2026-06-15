@@ -1,0 +1,26 @@
+{
+  "repository": "https://raw.githubusercontent.com/Arsenalists-of-Create/Create-Radar/master",
+  "prefix": "",
+  "translation": "src/main/resources/assets/create_radar/lang/zh_cn.json",
+  "icons": {
+    "block": [
+      "sky_radar_mount_input",
+      "yaw_axis",
+      "fire_controller",
+      "sonar_sensor",
+      "fire_controller_on",
+      "smart_cannon_mount_toggle",
+      "smart_cannon_mount_firing",
+      "smart_cannon_mount_input",
+      "spotlight_light"
+    ],
+    "item": [
+      "identification_filter",
+      "binoculars",
+      "guided_fuze",
+      "targeting_filter_item",
+      "radar_safe_zone_designator",
+      "detection_filter_item"
+    ]
+  }
+}

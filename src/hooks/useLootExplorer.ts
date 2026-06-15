@@ -129,33 +129,24 @@ export function useLootExplorer() {
     const term = searchQuery.slice(1).toLowerCase();
     const currentDirPath = currentPath.join("/");
 
-    // const filtered = Object.entries(itemRegistry)
-    // .filter(([id, occurrences]) => {
-    //   const standard = occurrences.at(0);
-    //   if(standard && standard.translatedName?.includes(term)) {
-    //     return true;
-    //   }
-    //   if(id && id.toLowerCase().includes(term)){
-    //     return true;
-    //   }
-    // })
+    return Object.entries(itemRegistry)
+    .filter(([id, occurrences]) => {
+      const standard = occurrences.at(0);
+      if(!(id && id.toLowerCase().includes(term)) && !(standard && standard.translatedName?.includes(term))) {
+        return false;
+      }
 
-
-    return Object.keys(itemRegistry)
-      .filter((id) => {
-        if (!id || !id.toLowerCase().includes(term)) {
-          return false;
-        }
-        if (currentPath.length === 0) {
-          return true;
-        }
-
-        return itemRegistry[id].some((occurrence) =>
-          occurrence.container.replace(/\\/g, "/").includes(currentDirPath),
-        );
-      })
-      .sort((a,b) => a.length - b.length)
-      .slice(0, 50);
+      if (currentPath.length === 0) {
+        return true;
+      }
+      return occurrences.some((occurrence) => occurrence.container.replace(/\\/g, "/").includes(currentDirPath))
+    })
+    .reduce((key,[id]) => {
+      key.push(id)
+      return key
+    }, [] as string[])
+    .sort((a,b) => a.length - b.length)
+    .slice(0, 50);
   }, [itemRegistry, searchQuery, isInputGlobalSearch, currentPath]);
 
   const searchSuggestions = useMemo<SearchSuggestion[]>(() => {

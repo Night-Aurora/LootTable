@@ -1,6 +1,7 @@
 {
   "repository": "https://raw.githubusercontent.com/Creators-of-Create/Create/mc1.20.1/dev",
   "prefix": "",
+  "translation": "src/main/resources/assets/create/lang/zh_cn.json",
   "icons": {
     "block": [
       "pulley_rope",
@@ -15,6 +16,7 @@
       "factory_panel_connections",
       "andesite_block",
       "smart_observer_powered",
+      "signal_glow_3",
       "crushing_wheel_plates",
       "fluid_chute_unpowered",
       "linear_chassis_end",
@@ -29,10 +31,13 @@
       "redstone_antenna_powered",
       "mechanical_press_head",
       "packager_particle",
+      "smart_pipe_2",
+      "smart_pipe_3",
       "track_assembly_overlay",
       "andesite_casing_short",
       "harvester",
       "bracket_metal",
+      "sequenced_gearshift_2",
       "sequenced_gearshift",
       "rose_quartz_lamp_powered",
       "content_observer",
@@ -46,6 +51,7 @@
       "glass_fluid_pipe",
       "factory_panel",
       "adjustable_chain_gearshift",
+      "signal_glow_2",
       "hose_pulley_coil",
       "froggles",
       "hat_test",
@@ -98,6 +104,7 @@
       "clutch_on",
       "encased_chain_drive_end",
       "track_station_indicator",
+      "smart_pipe_1",
       "fluid_tank_window_single",
       "cogwheel_axis",
       "signal_glow",
@@ -109,6 +116,7 @@
       "creative_casing",
       "content_observer_powered",
       "repackager_particle",
+      "sequenced_gearshift_1",
       "clipboard_model_filled",
       "ladder_copper",
       "bracket_wooden",
@@ -136,11 +144,14 @@
       "deployer",
       "blaze_active",
       "belt_diagonal",
+      "sequenced_gearshift_3",
       "fan_blades",
       "raw_zinc_block",
       "adjustable_chain_gearshift_powered",
+      "sequenced_gearshift_5",
       "observer_indicator",
       "elevator_pulley_belt",
+      "sequenced_gearshift_4",
       "railway_casing",
       "hose",
       "chain_signal_box",
@@ -156,6 +167,7 @@
       "fluid_tank_window"
     ],
     "item": [
+      "chromatic_compound_2",
       "minecart_contraption",
       "schematic_and_quill",
       "raw_zinc",
@@ -179,6 +191,7 @@
       "train_door",
       "copper_sheet",
       "brass_ingot",
+      "chromatic_compound_1",
       "pulp",
       "schematic",
       "blaze_cake",
@@ -207,6 +220,7 @@
       "crushed_raw_quicksilver",
       "crushed_raw_osmium",
       "builders_tea",
+      "chromatic_compound_0",
       "crushed_raw_lead",
       "empty_clipboard",
       "linked_controller",
@@ -273,6 +287,7 @@
       "industrial_iron_window",
       "mangrove_window",
       "natural_scoria",
+      "weathered_iron_window_3_end",
       "bamboo_window",
       "dark_oak_window",
       "overgrown",
@@ -280,14 +295,17 @@
       "warped_window",
       "jungle_window",
       "limesand",
+      "weathered_iron_window_2_end",
       "acacia_window",
       "ornate_iron_window",
       "industrial_iron_window_end",
       "birch_window",
       "ornate_iron_window_end",
       "framed_glass",
+      "weathered_iron_window_1_end",
       "mossy",
-      "crimson_window"
+      "crimson_window",
+      "weathered_iron_window_4_end"
     ],
     "block/sail": [
       "canvas_light_blue",
@@ -337,6 +355,15 @@
       "oxidized_copper_tiles",
       "copper_tiles"
     ],
+    "block/indicator": [
+      "6",
+      "4",
+      "3",
+      "5",
+      "2",
+      "1",
+      "0"
+    ],
     "block/funnel": [
       "andesite_funnel_unpowered",
       "brass_funnel_powered",
@@ -353,6 +380,14 @@
       "andesite_bars_edge",
       "brass_bars",
       "copper_bars_edge"
+    ],
+    "block/threshold_switch": [
+      "level_5",
+      "level_3",
+      "level_1",
+      "level_4",
+      "level_0",
+      "level_2"
     ],
     "block/scaffold": [
       "brass_scaffold",
