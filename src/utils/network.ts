@@ -4,10 +4,6 @@ export function fetchImageAsDataUrl(url: string, timeoutMs: number): Promise<str
       if (!response.ok) {
         throw new Error("404 Not found");
       }
-      // const contentType = response.headers.get("Content-Type") || undefined;
-      // if (!contentType || !contentType.startsWith("image/")) {
-      //   throw new Error("Invalid image");
-      // }
       if(!checkContentType(response, "image/")) {
         throw new Error("Invalid image");
       }

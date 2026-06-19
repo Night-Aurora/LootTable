@@ -95,7 +95,6 @@ function loadFromGit(
         // 网络超时不处理，等待后续可能重试成功
       return;
       }
-      //sessionStorage.setItem(cacheKey, NULL_ICON);
       setIconRegistry((prev) => ({ ...prev, [id]: false }));
     } finally {
       IN_FLIGHT_ICON_REQUESTS.delete(id);

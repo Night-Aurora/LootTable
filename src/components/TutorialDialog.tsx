@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BookOpen, X, ChevronRight, FolderOpen} from "lucide-react";
+import { BookOpen, X, ChevronRight, FolderOpen, Tag} from "lucide-react";
 import { markTutorialAsSeen } from "../utils/tutorialStorage";
 
 interface TutorialDialogProps {
@@ -13,6 +13,12 @@ const tutorialSteps = [
     image: undefined,
     description: "你可以浏览原版游戏Jar文件，数据在“data/minecraft/命名空间下。这时你可以看见”loot_tables“文件夹。同理，整合包的数据也在特定的专属Mod内可以找到。",
   },
+  {
+    icon: Tag,
+    title: "搜索",
+    image: undefined,
+    description: "你可以通过搜索栏输入名称或者id来筛选当前界面的数据；当你输入'#'时，将会处于物品搜索模式，这里会显示当前目录下匹配搜索内容的所有物品。注意：物品搜索模式下：在根目录搜索，最多显示100条数据，而在非根目录最多显示1000条数据。适当增加更多搜索关键字来匹配更精确的数据！"
+  }
 ];
 
 export function TutorialDialog({ onClose }: TutorialDialogProps) {

@@ -8,32 +8,32 @@ const pendingJsonRequests = new Map<string, Promise<GitModMeta>>();
 
 
 export async function loadTranslation(mod_id: string, items: LootItem[][]) {
-  const meta = await loadPathIndex(mod_id); // 获取路径索引表
-  if (!meta.translation) {
-    return;
-  }
-
-  const getType = (name: string) => { // 通过路径索引获取物品类型（item | block）
-    const key = Object.keys(meta.icons).find((groupKey) => {
-      const names = meta.icons[groupKey];
-      return Array.isArray(names) && names.includes(name);
-    });
-    const type = key ? (key.includes("/") ? key.slice(0, key.indexOf("/")) : key) : null;
-    return type;
-  }
-  const loadTranslationJson = (async () => { // 加载github上的翻译json
-    const response = await fetchWithTimeout(`${meta.repository}/${meta.prefix}${meta.translation}`, FETCH_TIMEOUT_MS);
-
-    if (!response.ok) {
-      throw new Error(`Translation not found: ${response.status}`);
-    }
-    if (!checkContentType(response, "text/plain")) {
-      throw new Error(`Invalid translation json:${mod_id}`);
-    }
-
-    return await response.json() as Record<string, string>;
-  });
   try {
+    const meta = await loadPathIndex(mod_id); // 获取路径索引表
+    if (!meta.translation) {
+      return;
+    }
+
+    const getType = (name: string) => { // 通过路径索引获取物品类型（item | block）
+      const key = Object.keys(meta.icons).find((groupKey) => {
+        const names = meta.icons[groupKey];
+        return Array.isArray(names) && names.includes(name);
+      });
+      const type = key ? (key.includes("/") ? key.slice(0, key.indexOf("/")) : key) : null;
+      return type;
+    }
+    const loadTranslationJson = (async () => { // 加载github上的翻译json
+      const response = await fetchWithTimeout(`${meta.repository}/${meta.prefix}${meta.translation}`, FETCH_TIMEOUT_MS);
+
+      if (!response.ok) {
+        throw new Error(`Translation not found: ${response.status}`);
+      }
+      if (!checkContentType(response, "text/plain")) {
+        throw new Error(`Invalid translation json:${mod_id}`);
+      }
+
+      return await response.json() as Record<string, string>;
+    });
     const translation = await loadTranslationJson();
     items.forEach(item => {
       const standard = item.at(0)!;
@@ -42,7 +42,7 @@ export async function loadTranslation(mod_id: string, items: LootItem[][]) {
       const key = `${type}.${standard.id.replace(':', '.')}`;
       item.forEach(i => i.translatedName = translation[key] || undefined);
     });
-  } catch (e:any) {
+  } catch (e: any) {
     console.warn(`${mod_id}: ${e.message}`);
   }
 }
@@ -64,16 +64,16 @@ export async function loadPathIndex(mod_id: string): Promise<GitModMeta> {
     const response = await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
 
     if (!response.ok) {
-      throw new Error(`Metadata not found: ${response.status}`);
+      throw new Error(`Metadata of ${mod_id} not found: ${response.status}`);
     }
     if (!checkContentType(response, "application/json")) {
-      throw new Error(`Invalid json:${mod_id}`);
+      throw new Error("Unintended Type");
     }
 
     const json = await response.json() as GitModMeta;
 
     if (!json?.repository || !json?.icons) {
-      throw new Error("Invalid metadata json");
+      throw new Error(`Invalid metadata json of ${mod_id}`);
     }
 
     JSON_REGISTRY[mod_id] = json;
@@ -88,7 +88,7 @@ export async function loadPathIndex(mod_id: string): Promise<GitModMeta> {
     () => {
       pendingJsonRequests.delete(mod_id);
     },
-  );
+  )
   pendingJsonRequests.set(mod_id, promise);
   return await promise;
 }

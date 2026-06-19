@@ -53,18 +53,23 @@ export function useLootExplorer() {
     }
 
     const lastPart = currentPath[currentPath.length - 1];
-    if (lastPart?.startsWith("#")) {
-      const itemId = lastPart.slice(1);
-      const allOccurrences = itemRegistry[itemId] || [];
-
-      if (currentPath.length > 1) {
-        const limitPath = currentPath.slice(0, -1).join("/");
-        return allOccurrences.filter((occurrence) =>
-          occurrence.container.replace(/\\/g, "/").includes(limitPath),
-        );
+    if (searchQuery?.startsWith("#") || lastPart?.startsWith("#")) {
+      const itemId = (searchQuery || lastPart).slice(1);
+      const all = Object.entries(itemRegistry) // 所有匹配id的物品
+      .filter(([id]) => {
+        if(id && id.toLowerCase().includes(itemId.toLowerCase())) {
+          return true;
+        }
+        return false;
+      })
+      .flatMap(([, occurrences]) => occurrences)
+      
+      if (currentPath.length > 1) { // 如果不在主目录，增加路径过滤，显示当前目录下的匹配物品
+        const limitPath = lastPart.startsWith("#") ? currentPath.slice(0, -1).join("/") : currentPath.join("/"); // 这个判断是为了区别特定的物品搜索结果界面
+        return all.filter((occurrence) => occurrence.container.replace(/\\/g, "/").includes(limitPath)).slice(0, 100);
       }
 
-      return allOccurrences;
+      return (searchQuery.includes(":") && all.length < 1000) ? all : all.slice(0, 100);
     }
 
     let currentLevel = rootData;
@@ -80,11 +85,11 @@ export function useLootExplorer() {
     }
 
     return Object.values(currentLevel);
-  }, [rootData, currentPath, itemRegistry]);
+  }, [rootData, currentPath, itemRegistry, searchQuery]);
 
   const isListView = useMemo(() => {
     const lastPart = currentPath[currentPath.length - 1];
-    if (lastPart?.startsWith("#")) {
+    if (searchQuery.startsWith("#") || lastPart?.startsWith("#")) {
       return true;
     }
 
@@ -98,7 +103,7 @@ export function useLootExplorer() {
     }
 
     return node?.type === "file";
-  }, [rootData, currentPath]);
+  }, [rootData, currentPath, searchQuery]);
 
   const filteredDisplayData = useMemo(() => {
     const lastPart = currentPath[currentPath.length - 1];
