@@ -53,8 +53,10 @@ export function useLootExplorer() {
     }
 
     const lastPart = currentPath[currentPath.length - 1];
-    if (searchQuery?.startsWith("#") || lastPart?.startsWith("#")) {
-      const itemId = (searchQuery || lastPart).slice(1);
+    const cond_1 = searchQuery?.startsWith("#");
+    const cond_2 = lastPart?.startsWith("#");
+    if (cond_1 || cond_2) {
+      const itemId = (cond_2 ? lastPart : searchQuery || lastPart).slice(1);
       const all = Object.entries(itemRegistry) // 所有匹配id的物品
       .filter(([id]) => {
         if(id && id.toLowerCase().includes(itemId.toLowerCase())) {

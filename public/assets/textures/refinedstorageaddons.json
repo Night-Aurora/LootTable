@@ -2,10 +2,5 @@
   "repository": "https://raw.githubusercontent.com/refinedmods/refinedstorageaddons/develop",
   "prefix": "",
   "translation": "src/main/resources/assets/refinedstorageaddons/lang/zh_cn.json",
-  "icons": {
-    "item": [
-      "wireless_crafting_grid_connected",
-      "wireless_crafting_grid_disconnected"
-    ]
-  }
+  "icons": {}
 }

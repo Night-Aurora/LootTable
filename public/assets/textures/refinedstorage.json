@@ -1,42 +1,8 @@
 {
-  "repository": "https://raw.githubusercontent.com/refinedmods/refinedstorage2/develop",
+  "repository": "https://raw.githubusercontent.com/refinedmods/refinedstorage2/main",
   "prefix": "refinedstorage-common/",
   "translation": "src/main/resources/assets/refinedstorage/lang/zh_cn.json",
   "icons": {
-    "item": [
-      "creative_fluid_storage_disk",
-      "1k_storage_part",
-      "silicon",
-      "4k_storage_disk",
-      "4096b_fluid_storage_disk",
-      "64k_storage_part",
-      "improved_processor",
-      "64b_fluid_storage_part",
-      "construction_core",
-      "raw_basic_processor",
-      "destruction_core",
-      "storage_housing",
-      "wrench",
-      "advanced_processor",
-      "256b_fluid_storage_part",
-      "256b_fluid_storage_disk",
-      "raw_advanced_processor",
-      "processor_binding",
-      "16k_storage_part",
-      "creative_storage_disk",
-      "basic_processor",
-      "64k_storage_disk",
-      "16k_storage_disk",
-      "1024b_fluid_storage_part",
-      "1k_storage_disk",
-      "1024b_fluid_storage_disk",
-      "4096b_fluid_storage_part",
-      "64b_fluid_storage_disk",
-      "raw_improved_processor",
-      "quartz_enriched_iron",
-      "quartz_enriched_copper",
-      "4k_storage_part"
-    ],
     "block/cable": [
       "lime",
       "green",
@@ -56,37 +22,25 @@
       "blue",
       "light_blue"
     ],
-    "block/portable_grid": [
-      "portable_grid_2_inactive",
-      "portable_grid_3",
-      "portable_grid_4",
-      "portable_grid_8",
-      "portable_grid_1",
-      "portable_grid_6",
-      "portable_grid_7",
-      "portable_grid_2",
-      "portable_grid_5"
+    "item": [
+      "creative_fluid_storage_disk",
+      "improved_processor",
+      "raw_basic_processor",
+      "storage_housing",
+      "wrench",
+      "advanced_processor",
+      "raw_advanced_processor",
+      "processor_binding",
+      "creative_storage_disk",
+      "basic_processor",
+      "raw_improved_processor",
+      "quartz_enriched_copper"
     ],
     "item/pattern": [
       "crafting",
       "empty",
-      "stonecutter",
       "processing",
       "smithing_table"
-    ],
-    "block/fluid_storage_block": [
-      "creative_fluid_storage_block",
-      "1024b_fluid_storage_block",
-      "4096b_fluid_storage_block",
-      "256b_fluid_storage_block",
-      "64b_fluid_storage_block"
-    ],
-    "block/storage_block": [
-      "4k_storage_block",
-      "64k_storage_block",
-      "creative_storage_block",
-      "1k_storage_block",
-      "16k_storage_block"
     ],
     "block/disk": [
       "fluid_disk",
@@ -94,6 +48,22 @@
       "leds"
     ],
     "item/configuration_card": [
+      "active",
+      "inactive"
+    ],
+    "item/wireless_grid": [
+      "active",
+      "inactive"
+    ],
+    "item/security_card": [
+      "active",
+      "inactive"
+    ],
+    "item/network_card": [
+      "active",
+      "inactive"
+    ],
+    "item/wireless_autocrafting_monitor": [
       "active",
       "inactive"
     ],
@@ -105,15 +75,59 @@
       "out",
       "in"
     ],
-    "block/controller": [
-      "off",
-      "on"
+    "block/disk_interface": [
+      "right",
+      "left"
+    ],
+    "block/interface": [
+      "active",
+      "inactive"
+    ],
+    "block/autocrafting_monitor": [
+      "right",
+      "left"
+    ],
+    "block/autocrafter_manager": [
+      "right",
+      "left"
+    ],
+    "block/disk_drive": [
+      "right",
+      "left"
+    ],
+    "block/crafting_grid": [
+      "right",
+      "left"
+    ],
+    "block/security_manager": [
+      "right",
+      "left"
+    ],
+    "block/grid": [
+      "right",
+      "left"
+    ],
+    "block/pattern_grid": [
+      "right",
+      "left"
     ],
     "block/network_transmitter": [
       "base"
     ],
     "block/machine_casing": [
       "end"
+    ],
+    "block/fluid_storage_block": [
+      "creative_fluid_storage_block"
+    ],
+    "block/wireless_transmitter": [
+      "base"
+    ],
+    "block/storage_block": [
+      "creative_storage_block"
+    ],
+    "block/network_receiver": [
+      "base"
     ]
   }
 }

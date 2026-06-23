@@ -21,11 +21,9 @@
       "orange_cement_bucket",
       "track_layers_bag_filled",
       "light_gray_cement_bucket",
-      "distillation_controller",
       "plant_oil_bucket",
       "yellow_cement_bucket",
       "magenta_cement_bucket",
-      "engine_piston",
       "red_cement_bucket",
       "brown_cement_bucket",
       "gasoline_bucket",
@@ -39,33 +37,15 @@
       "oil_scanner_medium",
       "engine_silencer",
       "biodiesel_bucket",
-      "oil_scanner_none",
       "track_layers_bag",
       "blue_cement_bucket",
       "gray_cement_bucket",
       "black_cement_bucket"
     ],
-    "block/concrete": [
-      "yellow_concrete",
-      "green_concrete",
-      "purple_concrete",
-      "lime_concrete",
-      "magenta_concrete",
-      "cyan_concrete",
-      "light_blue_concrete",
-      "black_concrete",
-      "gray_concrete",
-      "blue_concrete",
-      "red_concrete",
-      "brown_concrete",
-      "light_gray_concrete",
-      "orange_concrete",
-      "pink_concrete",
-      "white_concrete"
-    ],
     "block": [
       "pumpjack_hole_base",
       "pumpjack_hole_pipe",
+      "engine_turbocharger",
       "andesite_girder_pole",
       "asphalt",
       "aged_asphalt",
@@ -73,20 +53,18 @@
       "chip_wood_beam",
       "chip_wood_block",
       "sheet_metal",
-      "basin_fermenting_station",
       "weathered_asphalt",
       "gauge",
+      "engine_silencer",
       "worn_asphalt"
     ],
     "item/lighter": [
-      "diamond",
       "arc",
       "obsidian",
       "glass",
       "willows",
       "soul",
       "fire",
-      "dragon",
       "sussy",
       "heavier",
       "creeper",
@@ -99,8 +77,8 @@
       "blank",
       "lines"
     ],
-    "block/distillation_tower": [
-      "distillation_tank"
+    "block/bulk_fermenter": [
+      "gauge"
     ]
   }
 }
